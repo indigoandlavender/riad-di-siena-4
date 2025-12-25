@@ -38,7 +38,7 @@ export async function GET() {
         address2: "Marrakech Medina, Morocco",
         phone: "+212 600 000 000",
         whatsapp: "+212 600 000 000",
-        email: "hello@riaddisiena.com",
+        email: "happy@riaddisiena.com",
       },
     },
     currencies: [
