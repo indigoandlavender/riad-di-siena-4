@@ -7,29 +7,55 @@ import BookingModal from "./BookingModal";
 import { useCurrency } from "./CurrencyContext";
 
 // The Slow Way South - Syndication Component
-// Pulls the 3-Day Sahara Circle journey data from Slow Morocco
+// Pulls journey data from Slow Morocco API - FULLY DYNAMIC
+
+interface Journey {
+  slug: string;
+  title: string;
+  duration: string;
+  durationDays: number;
+  description: string;
+  arcDescription: string;
+  heroImage: string;
+  price: string;
+  startCity: string;
+  focus: string;
+}
+
+interface ItineraryDay {
+  dayNumber: number;
+  cityName: string;
+  fromCity: string;
+  toCity: string;
+  description: string;
+  imageUrl: string;
+  travelTime: string;
+  activities: string;
+  meals: string;
+}
 
 interface SlowWaySouthProps {
-  ctaUrl?: string;
+  journeySlug?: string;
   ctaText?: string;
 }
 
 export default function SlowWaySouth({ 
-  ctaUrl = "https://slowmorocco.com/journeys/3-Day-Sahara-Circle",
+  journeySlug = "3-Day-Sahara-Circle",
   ctaText = "The Full Journey"
 }: SlowWaySouthProps) {
   const { formatPrice } = useCurrency();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [heroImage, setHeroImage] = useState<string>("");
+  const [journey, setJourney] = useState<Journey | null>(null);
+  const [itinerary, setItinerary] = useState<ItineraryDay[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the 3-Day Sahara Circle journey from Slow Morocco
-    fetch("https://www.slowmorocco.com/api/journeys/3-Day-Sahara-Circle")
+    fetch(`https://www.slowmorocco.com/api/journeys/${journeySlug}`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.success && data.journey?.heroImage) {
-          setHeroImage(data.journey.heroImage);
+        if (data.success) {
+          setJourney(data.journey);
+          setItinerary(data.itinerary || []);
         }
         setLoading(false);
       })
@@ -37,16 +63,39 @@ export default function SlowWaySouth({
         console.error("Error fetching Slow Morocco journey:", err);
         setLoading(false);
       });
-  }, []);
+  }, [journeySlug]);
+
+  if (loading) {
+    return (
+      <section className="bg-sand py-20">
+        <div className="flex justify-center">
+          <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+        </div>
+      </section>
+    );
+  }
+
+  if (!journey) {
+    return null;
+  }
+
+  // Build focus tags from journey data
+  const focusTags = [
+    journey.durationDays ? `${journey.durationDays} Days` : "",
+    journey.focus || "",
+  ].filter(Boolean).join(" · ");
+
+  // Calculate price per person (assuming price is total for 2)
+  const pricePerPerson = journey.price ? Math.round(parseFloat(journey.price) / 2) : 600;
 
   return (
     <section className="bg-sand">
       {/* Immersive Hero Image */}
       <div className="relative h-[70vh] bg-[#e8e0d4]">
-        {heroImage && (
+        {journey.heroImage && (
           <Image
-            src={heroImage}
-            alt="3-Day Sahara Circle"
+            src={journey.heroImage}
+            alt={journey.title}
             fill
             className="object-cover"
           />
@@ -56,16 +105,19 @@ export default function SlowWaySouth({
         {/* Overlay Content */}
         <div className="absolute inset-0 flex items-end">
           <div className="container mx-auto px-6 pb-16 text-white">
-            <p className="text-xs tracking-[0.3em] uppercase mb-4 text-white/80">
-              3 Days · Desert · Mountains
-            </p>
+            {focusTags && (
+              <p className="text-xs tracking-[0.3em] uppercase mb-4 text-white/80">
+                {focusTags}
+              </p>
+            )}
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl mb-4">
-              The Slow Way South
+              {journey.title}
             </h2>
-            <p className="max-w-xl text-white/90 leading-relaxed">
-              From the riad to the Sahara and back. Through valleys where kasbahs rise 
-              from red earth, nights under stars thick enough to press against your chest.
-            </p>
+            {journey.arcDescription && (
+              <p className="max-w-xl text-white/90 leading-relaxed">
+                {journey.arcDescription}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -73,53 +125,54 @@ export default function SlowWaySouth({
       {/* Journey Details */}
       <div className="py-20">
         <div className="max-w-4xl mx-auto px-6">
-          {/* Day markers */}
-          <div className="grid md:grid-cols-3 gap-12 mb-16">
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-full border border-foreground/20 flex items-center justify-center text-sm mx-auto mb-4">
-                1
-              </div>
-              <h3 className="font-serif text-lg mb-2">Marrakech → Draa Valley</h3>
-              <p className="text-sm text-muted-foreground">
-                Over the Atlas. Down into palm groves and ancient kasbahs.
-              </p>
+          {/* Day markers - Dynamic from itinerary */}
+          {itinerary.length > 0 && (
+            <div className={`grid gap-12 mb-16 ${
+              itinerary.length === 2 ? "md:grid-cols-2" :
+              itinerary.length === 3 ? "md:grid-cols-3" :
+              itinerary.length >= 4 ? "md:grid-cols-4" : ""
+            }`}>
+              {itinerary.map((day) => (
+                <div key={day.dayNumber} className="text-center">
+                  <div className="w-12 h-12 rounded-full border border-foreground/20 flex items-center justify-center text-sm mx-auto mb-4">
+                    {day.dayNumber}
+                  </div>
+                  <h3 className="font-serif text-lg mb-2">
+                    {day.fromCity && day.toCity && day.fromCity !== day.toCity 
+                      ? `${day.fromCity} → ${day.toCity}`
+                      : day.cityName || `Day ${day.dayNumber}`
+                    }
+                  </h3>
+                  <p className="text-sm text-muted-foreground line-clamp-3">
+                    {day.description}
+                  </p>
+                </div>
+              ))}
             </div>
-
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-full border border-foreground/20 flex items-center justify-center text-sm mx-auto mb-4">
-                2
-              </div>
-              <h3 className="font-serif text-lg mb-2">The Sahara</h3>
-              <p className="text-sm text-muted-foreground">
-                Dunes at sunset. Dinner over coals. Stars without end.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-full border border-foreground/20 flex items-center justify-center text-sm mx-auto mb-4">
-                3
-              </div>
-              <h3 className="font-serif text-lg mb-2">Return via the Gorges</h3>
-              <p className="text-sm text-muted-foreground">
-                Nine hours through Todra and Dades. Stone and light shifting.
-              </p>
-            </div>
-          </div>
+          )}
 
           {/* CTA */}
           <div className="text-center">
             {/* Price */}
-            <p className="text-2xl font-serif mb-2">€1,200</p>
-            <p className="text-sm text-muted-foreground mb-8">for 2 guests / all meals included</p>
+            {journey.price && (
+              <>
+                <p className="text-2xl font-serif mb-2">
+                  {formatPrice(parseFloat(journey.price))}
+                </p>
+                <p className="text-sm text-muted-foreground mb-8">
+                  for 2 guests / all meals included
+                </p>
+              </>
+            )}
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
               <Link
-                href={ctaUrl}
+                href={`https://slowmorocco.com/journeys/${journeySlug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block border border-foreground px-10 py-4 text-xs tracking-[0.2em] uppercase hover:bg-foreground hover:text-background transition-colors"
               >
-                The Full Journey
+                {ctaText}
               </Link>
               <button
                 onClick={() => setIsBookingOpen(true)}
@@ -160,17 +213,17 @@ export default function SlowWaySouth({
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
         item={{
-          id: "sahara-circle-3day",
-          name: "The Slow Way South - 3-Day Sahara Circle",
-          priceEUR: "600",
+          id: journey.slug || journeySlug,
+          name: journey.title,
+          priceEUR: String(pricePerPerson),
         }}
         config={{
-          maxNights: 3,
+          maxNights: journey.durationDays || 3,
           maxUnits: 4,
           unitLabel: "person",
           selectCheckout: false,
           propertyName: "Slow Morocco",
-          paypalContainerId: "paypal-slow-way-south",
+          paypalContainerId: `paypal-${journey.slug || journeySlug}`,
         }}
         formatPrice={formatPrice}
         paypalClientId="AWVf28iPmlVmaEyibiwkOtdXAl5UPqL9i8ee9yStaG6qb7hCwNRB2G95SYwbcikLnBox6CGyO-boyAvu"
