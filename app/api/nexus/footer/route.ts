@@ -1,86 +1,54 @@
 import { NextResponse } from "next/server";
-import { 
-  getNexusFooterLinks, 
-  getNexusCurrencies, 
-  getNexusLanguages,
-  getSiteConfig 
-} from "@/lib/nexus";
 
+// Hardcoded footer data - Nexus integration disabled for stability
 export async function GET() {
-  try {
-    // Fetch all data in parallel
-    const [footerLinks, currencies, languages, siteConfig] = await Promise.all([
-      getNexusFooterLinks(),
-      getNexusCurrencies(),
-      getNexusLanguages(),
-      getSiteConfig(),
-    ]);
-
-    // Group footer links by column
-    const columns: Record<string, { title: string; links: { label: string; href: string; type: string }[] }> = {};
-    
-    footerLinks
-      .sort((a, b) => {
-        // Sort by column first, then by order
-        const colDiff = parseInt(a.column_number) - parseInt(b.column_number);
-        if (colDiff !== 0) return colDiff;
-        return parseInt(a.link_order) - parseInt(b.link_order);
-      })
-      .forEach((link) => {
-        const colNum = link.column_number;
-        if (!columns[colNum]) {
-          columns[colNum] = {
-            title: link.column_title,
-            links: [],
-          };
-        }
-        columns[colNum].links.push({
-          label: link.link_label,
-          href: link.link_href || "",
-          type: link.link_type,
-        });
-      });
-
-    // Filter currencies that apply to travel sites
-    const filteredCurrencies = currencies
-      .filter((c) => c.currency_code && c.show_for_site_types?.includes("travel"))
-      .map((c) => ({
-        code: c.currency_code,
-        symbol: c.currency_symbol,
-        label: c.currency_label,
-      }));
-
-    // Filter enabled languages
-    const filteredLanguages = languages
-      .filter((l) => l.language_code && l.enabled_default === "TRUE")
-      .map((l) => ({
-        code: l.language_code.split("-")[0].toUpperCase(), // "en-US" -> "EN"
-        label: l.language_label,
-        native: l.native_label,
-        rtl: l.rtl === "TRUE",
-      }));
-
-    return NextResponse.json({
-      success: true,
-      footer: {
-        columns: Object.values(columns),
-        siteInfo: siteConfig ? {
-          name: siteConfig.site_name,
-          address1: siteConfig.address_line1,
-          address2: siteConfig.address_line2,
-          phone: siteConfig.contact_phone,
-          whatsapp: siteConfig.whatsapp,
-          email: siteConfig.contact_email,
-        } : null,
+  return NextResponse.json({
+    success: true,
+    footer: {
+      columns: [
+        {
+          title: "Stay",
+          links: [
+            { label: "Rooms", href: "/rooms", type: "internal" },
+            { label: "The Douaria", href: "/the-douaria", type: "internal" },
+            { label: "The Kasbah", href: "/the-kasbah", type: "internal" },
+            { label: "The Desert Camp", href: "/the-desert-camp", type: "internal" },
+          ],
+        },
+        {
+          title: "Explore",
+          links: [
+            { label: "The Riad", href: "/the-riad", type: "internal" },
+            { label: "Philosophy", href: "/philosophy", type: "internal" },
+            { label: "Beyond the Walls", href: "/beyond-the-walls", type: "internal" },
+          ],
+        },
+        {
+          title: "Information",
+          links: [
+            { label: "Directions", href: "/directions", type: "internal" },
+            { label: "FAQ", href: "/faq", type: "internal" },
+            { label: "Contact", href: "/contact", type: "internal" },
+          ],
+        },
+      ],
+      siteInfo: {
+        name: "Riad di Siena",
+        address1: "37 Derb Jdid, Riad Laarous",
+        address2: "Marrakech Medina, Morocco",
+        phone: "+212 600 000 000",
+        whatsapp: "+212 600 000 000",
+        email: "hello@riaddisiena.com",
       },
-      currencies: filteredCurrencies,
-      languages: filteredLanguages,
-    });
-  } catch (error) {
-    console.error("Error fetching Nexus footer data:", error);
-    return NextResponse.json(
-      { success: false, error: "Failed to fetch footer data" },
-      { status: 500 }
-    );
-  }
+    },
+    currencies: [
+      { code: "EUR", symbol: "€", label: "Euro" },
+      { code: "USD", symbol: "$", label: "US Dollar" },
+      { code: "GBP", symbol: "£", label: "British Pound" },
+      { code: "MAD", symbol: "DH", label: "Moroccan Dirham" },
+    ],
+    languages: [
+      { code: "EN", label: "English", native: "English", rtl: false },
+    ],
+  });
 }
