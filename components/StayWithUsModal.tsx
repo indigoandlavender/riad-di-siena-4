@@ -263,21 +263,22 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
         </div>
       </div>
 
-      {/* Unified Booking Modal */}
-      {bookingItem && bookingConfig && (
-        <BookingModal
-          isOpen={bookingModalOpen}
-          onClose={() => {
-            setBookingModalOpen(false);
+      {/* Unified Booking Modal - Keep mounted, use isOpen for visibility */}
+      <BookingModal
+        isOpen={bookingModalOpen && bookingItem !== null}
+        onClose={() => {
+          setBookingModalOpen(false);
+          // Clear item after delay to let modal close gracefully
+          setTimeout(() => {
             setBookingItem(null);
             setBookingConfig(null);
-          }}
-          item={bookingItem}
-          config={bookingConfig}
-          formatPrice={formatPrice}
-          paypalClientId={PAYPAL_CLIENT_ID}
-        />
-      )}
+          }, 300);
+        }}
+        item={bookingItem || { id: "", name: "", priceEUR: "0" }}
+        config={bookingConfig || {}}
+        formatPrice={formatPrice}
+        paypalClientId={PAYPAL_CLIENT_ID}
+      />
     </>
   );
 }

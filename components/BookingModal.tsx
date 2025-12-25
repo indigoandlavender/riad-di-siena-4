@@ -73,7 +73,6 @@ function PayPalButton({
       if (!containerRef.current || !window.paypal || !isMounted.current) return;
 
       try {
-        // Clear any existing content safely
         if (containerRef.current) {
           containerRef.current.innerHTML = "";
         }
@@ -131,7 +130,6 @@ function PayPalButton({
           };
           document.head.appendChild(script);
         } else {
-          // Script exists, wait for it
           const checkInterval = setInterval(() => {
             if (window.paypal) {
               clearInterval(checkInterval);
@@ -139,7 +137,6 @@ function PayPalButton({
             }
           }, 100);
           
-          // Timeout after 10 seconds
           timeoutId = setTimeout(() => {
             clearInterval(checkInterval);
             if (isMounted.current && !window.paypal) {
@@ -151,15 +148,12 @@ function PayPalButton({
       }
     };
 
-    // Small delay to ensure DOM is ready
     requestAnimationFrame(initPayPal);
 
-    // Cleanup function - critical for preventing the error
     return () => {
       isMounted.current = false;
       if (timeoutId) clearTimeout(timeoutId);
       
-      // Close PayPal buttons if they exist
       if (buttonsInstance.current && typeof buttonsInstance.current.close === "function") {
         try {
           buttonsInstance.current.close();
@@ -173,8 +167,8 @@ function PayPalButton({
 
   if (error) {
     return (
-      <div style={{ padding: "1rem", textAlign: "center", color: "#666" }}>
-        <p>Unable to load payment. Please refresh and try again.</p>
+      <div className="py-6 text-center">
+        <p className="text-sm text-foreground/50">Unable to load payment. Please refresh and try again.</p>
       </div>
     );
   }
@@ -182,19 +176,57 @@ function PayPalButton({
   return (
     <div>
       {loading && (
-        <div style={{ display: "flex", justifyContent: "center", padding: "1rem" }}>
-          <div style={{
-            width: "24px",
-            height: "24px",
-            border: "2px solid #ccc",
-            borderTopColor: "#333",
-            borderRadius: "50%",
-            animation: "spin 1s linear infinite",
-          }} />
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <div className="flex justify-center py-6">
+          <div className="w-5 h-5 border border-foreground/20 border-t-foreground/60 rounded-full animate-spin" />
         </div>
       )}
       <div ref={containerRef} />
+    </div>
+  );
+}
+
+// ============================================================================
+// QUANTITY SELECTOR COMPONENT
+// ============================================================================
+
+function QuantitySelector({
+  label,
+  value,
+  min = 1,
+  max = 10,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min?: number;
+  max?: number;
+  onChange: (val: number) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between py-4 border-b border-foreground/10">
+      <span className="text-sm text-foreground/70">{label}</span>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => onChange(Math.max(min, value - 1))}
+          disabled={value <= min}
+          className="w-8 h-8 flex items-center justify-center border border-foreground/20 text-foreground/50 hover:border-foreground/40 hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <line x1="2" y1="6" x2="10" y2="6" />
+          </svg>
+        </button>
+        <span className="w-8 text-center text-foreground">{value}</span>
+        <button
+          onClick={() => onChange(Math.min(max, value + 1))}
+          disabled={value >= max}
+          className="w-8 h-8 flex items-center justify-center border border-foreground/20 text-foreground/50 hover:border-foreground/40 hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <line x1="6" y1="2" x2="6" y2="10" />
+            <line x1="2" y1="6" x2="10" y2="6" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 }
@@ -218,10 +250,7 @@ export default function BookingModal({
     setMounted(true);
   }, []);
 
-  // Don't render on server or if not mounted
   if (!mounted) return null;
-  
-  // Don't render if not open or no valid item
   if (!isOpen || !item || !item.id) return null;
 
   return createPortal(
@@ -247,14 +276,20 @@ function BookingModalContent({
 }: Omit<BookingModalProps, "isOpen">) {
   const {
     maxGuests = 2,
+    maxNights = 30,
+    maxUnits = 1,
+    unitLabel = "room",
     hasCityTax = false,
     cityTaxPerNight = 2.5,
+    selectCheckout = true,
   } = config;
 
   const [step, setStep] = useState(1);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
+  const [nights, setNights] = useState(1);
   const [guests, setGuests] = useState(1);
+  const [units, setUnits] = useState(1);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -262,13 +297,14 @@ function BookingModalContent({
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const nights = checkIn && checkOut
+  // Calculate nights from dates if selectCheckout is true
+  const calculatedNights = selectCheckout && checkIn && checkOut
     ? Math.max(1, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)))
-    : 0;
+    : nights;
 
   const pricePerNight = parseFloat(item.priceEUR) || 0;
-  const subtotal = pricePerNight * nights;
-  const cityTax = hasCityTax ? cityTaxPerNight * guests * nights : 0;
+  const subtotal = pricePerNight * calculatedNights * units;
+  const cityTax = hasCityTax ? cityTaxPerNight * guests * calculatedNights : 0;
   const total = subtotal + cityTax;
 
   const today = new Date().toISOString().split("T")[0];
@@ -279,9 +315,10 @@ function BookingModalContent({
       itemId: item.id,
       itemName: item.name,
       checkIn,
-      checkOut,
-      nights,
+      checkOut: selectCheckout ? checkOut : "",
+      nights: calculatedNights,
       guests,
+      units,
       totalEUR: total.toFixed(2),
       firstName,
       lastName,
@@ -308,14 +345,14 @@ function BookingModalContent({
     } finally {
       setIsSubmitting(false);
     }
-  }, [item, checkIn, checkOut, nights, guests, total, firstName, lastName, email, phone, message, onBookingComplete]);
+  }, [item, checkIn, checkOut, selectCheckout, calculatedNights, guests, units, total, firstName, lastName, email, phone, message, onBookingComplete]);
 
   const handlePaymentError = useCallback((err: any) => {
     console.error("PayPal error:", err);
     alert("Payment failed. Please try again.");
   }, []);
 
-  // Prevent body scroll when modal is open
+  // Prevent body scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -328,7 +365,9 @@ function BookingModalContent({
     setStep(1);
     setCheckIn("");
     setCheckOut("");
+    setNights(1);
     setGuests(1);
+    setUnits(1);
     setFirstName("");
     setLastName("");
     setEmail("");
@@ -336,76 +375,46 @@ function BookingModalContent({
     setMessage("");
   }, [item.id]);
 
+  const canProceedStep1 = selectCheckout 
+    ? checkIn && checkOut && calculatedNights >= 1
+    : checkIn && nights >= 1;
+
   return (
-    <div style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      zIndex: 99999,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    }}>
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0,0,0,0.6)",
-        }}
       />
 
       {/* Modal */}
-      <div style={{
-        position: "relative",
-        backgroundColor: "#f8f5f0",
-        width: "100%",
-        maxWidth: "28rem",
-        margin: "1rem",
-        maxHeight: "90vh",
-        overflowY: "auto",
-      }}>
+      <div className="relative bg-[#f8f5f0] w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Close button */}
         <button
           onClick={onClose}
-          style={{
-            position: "absolute",
-            top: "1rem",
-            right: "1rem",
-            width: "2rem",
-            height: "2rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            color: "#666",
-          }}
+          className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-foreground/40 hover:text-foreground/80 transition-colors z-10"
         >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <line x1="4" y1="4" x2="16" y2="16" />
-            <line x1="16" y1="4" x2="4" y2="16" />
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <line x1="2" y1="2" x2="14" y2="14" />
+            <line x1="14" y1="2" x2="2" y2="14" />
           </svg>
         </button>
 
-        <div style={{ padding: "2rem" }}>
-          <h2 style={{ fontFamily: "serif", fontSize: "1.5rem", marginBottom: "0.5rem" }}>{item.name}</h2>
-          <p style={{ fontSize: "0.875rem", color: "#666", marginBottom: "1.5rem" }}>{formatPrice(pricePerNight)} per night</p>
+        <div className="p-10">
+          {/* Header */}
+          <div className="mb-8">
+            <h2 className="font-serif text-2xl text-foreground/90 mb-1">{item.name}</h2>
+            <p className="text-sm text-foreground/50">{formatPrice(pricePerNight)} per {unitLabel} per night</p>
+          </div>
 
-          {/* Step 1: Dates */}
+          {/* Step 1: Dates & Quantity */}
           {step === 1 && (
             <div>
-              <p style={{ fontSize: "0.75rem", letterSpacing: "0.1em", color: "#999", marginBottom: "1rem" }}>STEP 1 OF 3 — SELECT DATES</p>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-6">Step 1 of 3 — Select dates</p>
 
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label style={{ display: "block", fontSize: "0.875rem", color: "#555", marginBottom: "0.25rem" }}>Check-in</label>
+              {/* Check-in */}
+              <div className="mb-4">
+                <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Check-in</label>
                 <input
                   type="date"
                   value={checkIn}
@@ -414,170 +423,208 @@ function BookingModalContent({
                     setCheckIn(e.target.value);
                     if (checkOut && e.target.value >= checkOut) setCheckOut("");
                   }}
-                  style={{ width: "100%", padding: "0.75rem", border: "1px solid #ccc", background: "transparent", marginBottom: "1rem" }}
+                  className="w-full py-3 bg-transparent border-b border-foreground/20 focus:border-foreground/40 focus:outline-none text-foreground transition-colors"
                 />
-
-                <label style={{ display: "block", fontSize: "0.875rem", color: "#555", marginBottom: "0.25rem" }}>Check-out</label>
-                <input
-                  type="date"
-                  value={checkOut}
-                  min={checkIn || today}
-                  onChange={(e) => setCheckOut(e.target.value)}
-                  style={{ width: "100%", padding: "0.75rem", border: "1px solid #ccc", background: "transparent", marginBottom: "1rem" }}
-                />
-
-                {maxGuests > 1 && (
-                  <>
-                    <label style={{ display: "block", fontSize: "0.875rem", color: "#555", marginBottom: "0.25rem" }}>Guests</label>
-                    <select
-                      value={guests}
-                      onChange={(e) => setGuests(Number(e.target.value))}
-                      style={{ width: "100%", padding: "0.75rem", border: "1px solid #ccc", background: "transparent" }}
-                    >
-                      {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => (
-                        <option key={n} value={n}>{n} guest{n > 1 ? "s" : ""}</option>
-                      ))}
-                    </select>
-                  </>
-                )}
               </div>
 
-              {nights > 0 && (
-                <div style={{ marginBottom: "1.5rem", padding: "1rem", backgroundColor: "rgba(0,0,0,0.03)" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.875rem", marginBottom: "0.5rem" }}>
-                    <span>{formatPrice(pricePerNight)} × {nights} nights</span>
-                    <span>{formatPrice(subtotal)}</span>
+              {/* Check-out or Nights */}
+              {selectCheckout ? (
+                <div className="mb-6">
+                  <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Check-out</label>
+                  <input
+                    type="date"
+                    value={checkOut}
+                    min={checkIn || today}
+                    onChange={(e) => setCheckOut(e.target.value)}
+                    className="w-full py-3 bg-transparent border-b border-foreground/20 focus:border-foreground/40 focus:outline-none text-foreground transition-colors"
+                  />
+                </div>
+              ) : (
+                <QuantitySelector
+                  label="Nights"
+                  value={nights}
+                  min={1}
+                  max={maxNights}
+                  onChange={setNights}
+                />
+              )}
+
+              {/* Units (if more than 1 allowed) */}
+              {maxUnits > 1 && (
+                <QuantitySelector
+                  label={`${unitLabel.charAt(0).toUpperCase() + unitLabel.slice(1)}s`}
+                  value={units}
+                  min={1}
+                  max={maxUnits}
+                  onChange={setUnits}
+                />
+              )}
+
+              {/* Guests */}
+              {maxGuests > 1 && (
+                <QuantitySelector
+                  label="Guests"
+                  value={guests}
+                  min={1}
+                  max={maxGuests}
+                  onChange={setGuests}
+                />
+              )}
+
+              {/* Price summary */}
+              {canProceedStep1 && (
+                <div className="mt-8 pt-6 border-t border-foreground/10">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-foreground/50">
+                      {formatPrice(pricePerNight)} × {calculatedNights} night{calculatedNights > 1 ? "s" : ""}
+                      {units > 1 && ` × ${units} ${unitLabel}s`}
+                    </span>
+                    <span className="text-foreground/70">{formatPrice(subtotal)}</span>
                   </div>
                   {hasCityTax && (
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.875rem", marginBottom: "0.5rem", color: "#666" }}>
-                      <span>City tax</span>
-                      <span>€{cityTax.toFixed(2)}</span>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-foreground/50">City tax</span>
+                      <span className="text-foreground/70">€{cityTax.toFixed(2)}</span>
                     </div>
                   )}
-                  <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "500", paddingTop: "0.5rem", borderTop: "1px solid rgba(0,0,0,0.1)" }}>
-                    <span>Total</span>
-                    <span>{formatPrice(total)}</span>
+                  <div className="flex justify-between text-base pt-3 border-t border-foreground/10">
+                    <span className="text-foreground/70">Total</span>
+                    <span className="font-medium text-foreground">{formatPrice(total)}</span>
                   </div>
                 </div>
               )}
 
+              {/* Continue button */}
               <button
                 onClick={() => setStep(2)}
-                disabled={!checkIn || !checkOut || nights < 1}
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  backgroundColor: checkIn && checkOut && nights >= 1 ? "#1a1a1a" : "#ccc",
-                  color: "#f8f5f0",
-                  border: "none",
-                  cursor: checkIn && checkOut && nights >= 1 ? "pointer" : "not-allowed",
-                }}
+                disabled={!canProceedStep1}
+                className="w-full mt-8 py-4 bg-foreground text-[#f8f5f0] text-sm tracking-wider uppercase disabled:opacity-30 disabled:cursor-not-allowed hover:bg-foreground/90 transition-colors"
               >
                 Continue
               </button>
             </div>
           )}
 
-          {/* Step 2: Details */}
+          {/* Step 2: Guest Details */}
           {step === 2 && (
             <div>
-              <p style={{ fontSize: "0.75rem", letterSpacing: "0.1em", color: "#999", marginBottom: "1rem" }}>STEP 2 OF 3 — YOUR DETAILS</p>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-6">Step 2 of 3 — Your details</p>
 
-              <div style={{ marginBottom: "1.5rem" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">First name</label>
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full py-3 bg-transparent border-b border-foreground/20 focus:border-foreground/40 focus:outline-none text-foreground transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Last name</label>
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="w-full py-3 bg-transparent border-b border-foreground/20 focus:border-foreground/40 focus:outline-none text-foreground transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Email</label>
                   <input
-                    type="text"
-                    placeholder="First name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    style={{ padding: "0.75rem", border: "1px solid #ccc", background: "transparent" }}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Last name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    style={{ padding: "0.75rem", border: "1px solid #ccc", background: "transparent" }}
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full py-3 bg-transparent border-b border-foreground/20 focus:border-foreground/40 focus:outline-none text-foreground transition-colors"
                   />
                 </div>
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  style={{ width: "100%", padding: "0.75rem", border: "1px solid #ccc", background: "transparent", marginBottom: "1rem" }}
-                />
-                <input
-                  type="tel"
-                  placeholder="Phone (optional)"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  style={{ width: "100%", padding: "0.75rem", border: "1px solid #ccc", background: "transparent", marginBottom: "1rem" }}
-                />
-                <textarea
-                  placeholder="Special requests (optional)"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  rows={3}
-                  style={{ width: "100%", padding: "0.75rem", border: "1px solid #ccc", background: "transparent", resize: "none" }}
-                />
+
+                <div>
+                  <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Phone <span className="normal-case text-foreground/30">(optional)</span></label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full py-3 bg-transparent border-b border-foreground/20 focus:border-foreground/40 focus:outline-none text-foreground transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Special requests <span className="normal-case text-foreground/30">(optional)</span></label>
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    rows={3}
+                    className="w-full py-3 bg-transparent border-b border-foreground/20 focus:border-foreground/40 focus:outline-none text-foreground transition-colors resize-none"
+                  />
+                </div>
               </div>
 
-              <div style={{ display: "flex", gap: "0.75rem" }}>
+              {/* Navigation */}
+              <div className="flex gap-4 mt-8">
                 <button
                   onClick={() => setStep(1)}
-                  style={{ flex: 1, padding: "0.75rem", border: "1px solid #1a1a1a", background: "transparent", cursor: "pointer" }}
+                  className="flex-1 py-4 border border-foreground/20 text-foreground/70 text-sm tracking-wider uppercase hover:border-foreground/40 hover:text-foreground transition-colors flex items-center justify-center gap-2"
                 >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <polyline points="9,2 4,7 9,12" />
+                  </svg>
                   Back
                 </button>
                 <button
                   onClick={() => setStep(3)}
                   disabled={!firstName || !lastName || !email}
-                  style={{
-                    flex: 1,
-                    padding: "0.75rem",
-                    backgroundColor: firstName && lastName && email ? "#1a1a1a" : "#ccc",
-                    color: "#f8f5f0",
-                    border: "none",
-                    cursor: firstName && lastName && email ? "pointer" : "not-allowed",
-                  }}
+                  className="flex-1 py-4 bg-foreground text-[#f8f5f0] text-sm tracking-wider uppercase disabled:opacity-30 disabled:cursor-not-allowed hover:bg-foreground/90 transition-colors flex items-center justify-center gap-2"
                 >
                   Continue
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <polyline points="5,2 10,7 5,12" />
+                  </svg>
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 3: Payment - Only render PayPal when on this step */}
+          {/* Step 3: Payment */}
           {step === 3 && (
             <div>
-              <p style={{ fontSize: "0.75rem", letterSpacing: "0.1em", color: "#999", marginBottom: "1rem" }}>STEP 3 OF 3 — PAYMENT</p>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-6">Step 3 of 3 — Payment</p>
 
-              <div style={{ marginBottom: "1.5rem", padding: "1rem", backgroundColor: "rgba(0,0,0,0.03)" }}>
-                <p style={{ fontSize: "0.875rem", marginBottom: "0.25rem" }}>{item.name}</p>
-                <p style={{ fontSize: "0.875rem", color: "#666", marginBottom: "0.75rem" }}>{checkIn} → {checkOut} · {nights} nights · {guests} guest{guests > 1 ? "s" : ""}</p>
-                <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "500", paddingTop: "0.5rem", borderTop: "1px solid rgba(0,0,0,0.1)" }}>
-                  <span>Total</span>
-                  <span>{formatPrice(total)}</span>
+              {/* Booking summary */}
+              <div className="bg-foreground/[0.03] p-6 mb-6">
+                <p className="font-serif text-lg text-foreground/90 mb-1">{item.name}</p>
+                <p className="text-sm text-foreground/50 mb-4">
+                  {checkIn} {selectCheckout && checkOut ? `→ ${checkOut}` : ""} · {calculatedNights} night{calculatedNights > 1 ? "s" : ""} · {guests} guest{guests > 1 ? "s" : ""}
+                  {units > 1 && ` · ${units} ${unitLabel}s`}
+                </p>
+                <div className="flex justify-between pt-4 border-t border-foreground/10">
+                  <span className="text-foreground/70">Total</span>
+                  <span className="font-medium text-foreground">{formatPrice(total)}</span>
                 </div>
               </div>
 
               <PayPalButton
                 amount={total.toFixed(2)}
-                description={`${item.name} - ${nights} nights`}
+                description={`${item.name} - ${calculatedNights} nights`}
                 clientId={paypalClientId}
                 onSuccess={handlePaymentSuccess}
                 onError={handlePaymentError}
               />
 
               {isSubmitting && (
-                <p style={{ textAlign: "center", fontSize: "0.875rem", color: "#666" }}>Processing payment...</p>
+                <p className="text-center text-sm text-foreground/50 mt-4">Processing payment...</p>
               )}
 
               <button
                 onClick={() => setStep(2)}
-                style={{ width: "100%", padding: "0.75rem", border: "1px solid #1a1a1a", background: "transparent", cursor: "pointer", marginTop: "1rem" }}
+                className="w-full mt-6 py-4 border border-foreground/20 text-foreground/70 text-sm tracking-wider uppercase hover:border-foreground/40 hover:text-foreground transition-colors flex items-center justify-center gap-2"
               >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <polyline points="9,2 4,7 9,12" />
+                </svg>
                 Back
               </button>
             </div>
@@ -585,30 +632,21 @@ function BookingModalContent({
 
           {/* Step 4: Success */}
           {step === 4 && (
-            <div style={{ textAlign: "center", padding: "2rem 0" }}>
-              <div style={{
-                width: "4rem",
-                height: "4rem",
-                border: "2px solid #1a1a1a",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 1.5rem",
-              }}>
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="8,16 14,22 24,10" />
+            <div className="text-center py-8">
+              <div className="w-16 h-16 border border-foreground/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <polyline points="6,14 12,20 22,8" />
                 </svg>
               </div>
-              <h3 style={{ fontFamily: "serif", fontSize: "1.5rem", marginBottom: "0.5rem" }}>Booking Confirmed</h3>
-              <p style={{ color: "#666", marginBottom: "1.5rem" }}>
-                Thank you! A confirmation email has been sent to {email}
+              <h3 className="font-serif text-2xl text-foreground/90 mb-2">Booking Confirmed</h3>
+              <p className="text-sm text-foreground/50 mb-8">
+                Thank you! A confirmation has been sent to {email}
               </p>
               <button
                 onClick={onClose}
-                style={{ fontSize: "0.75rem", letterSpacing: "0.1em", color: "#666", background: "none", border: "none", cursor: "pointer" }}
+                className="text-xs tracking-[0.2em] uppercase text-foreground/50 hover:text-foreground transition-colors"
               >
-                CLOSE
+                Close
               </button>
             </div>
           )}
