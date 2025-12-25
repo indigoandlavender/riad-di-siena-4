@@ -261,7 +261,8 @@ export default function RoomsPage() {
           iCalURL: selectedRoom.iCal_URL,
         } : { id: "", name: "", priceEUR: "0" }}
         config={{
-          maxGuests: 2,
+          maxGuestsPerUnit: 2,
+          baseGuestsPerUnit: 2,
           hasCityTax: true,
           selectCheckout: true,
           paypalContainerId: `paypal-room-${selectedRoom?.Room_ID || "default"}`,

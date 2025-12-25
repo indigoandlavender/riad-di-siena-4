@@ -173,7 +173,9 @@ export default function TheKasbahPage() {
           priceEUR: experience.Price_EUR,
         } : { id: "", name: "", priceEUR: "0" }}
         config={{
-          maxGuests: 3,
+          maxGuestsPerUnit: 3,
+          baseGuestsPerUnit: 2,
+          extraPersonFee: 60,
           maxNights: 5,
           maxUnits: 3,
           unitLabel: "room",
