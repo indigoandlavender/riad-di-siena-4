@@ -18,7 +18,7 @@ interface Experience {
   Package_ID: string;
   Name: string;
   Price_EUR: string;
-  Single_Supplement_EUR: string;
+  Extra_Person_EUR: string;
   Duration: string;
   Min_Guests: string;
   includes: string[];
@@ -30,6 +30,7 @@ interface Tent {
   Name: string;
   Description: string;
   Price_EUR: string;
+  Extra_Person_EUR: string;
   features: string[];
 }
 
@@ -52,6 +53,7 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [bookingItem, setBookingItem] = useState<any>(null);
   const [bookingConfig, setBookingConfig] = useState<any>(null);
+  const [cityTaxPerNight, setCityTaxPerNight] = useState(2.5);
 
   useEffect(() => {
     if (isOpen) {
@@ -60,8 +62,9 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
         fetch("/api/douaria-rooms").then(res => res.json()),
         fetch("/api/kasbah-experience").then(res => res.json()),
         fetch("/api/desert-tents").then(res => res.json()),
+        fetch("/api/settings").then(res => res.json()),
       ])
-        .then(([riad, douaria, kasbah, tents]) => {
+        .then(([riad, douaria, kasbah, tents, settings]) => {
           const filterBookable = (rooms: any[]) => rooms.filter((r: any) => 
             r.Bookable?.toLowerCase() !== "no"
           );
@@ -69,6 +72,9 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
           setDouariaRooms(filterBookable(douaria).map((r: Room) => ({ ...r, property: "douaria" })));
           if (kasbah.length > 0) setKasbahExperience(kasbah[0]);
           setDesertTents(tents);
+          if (settings.city_tax_eur) {
+            setCityTaxPerNight(parseFloat(settings.city_tax_eur));
+          }
           setLoading(false);
         })
         .catch(() => setLoading(false));
@@ -86,6 +92,7 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
       maxGuestsPerUnit: 2,
       baseGuestsPerUnit: 2,
       hasCityTax: true,
+      cityTaxPerNight,
       selectCheckout: true,
       paypalContainerId: `paypal-room-${room.Room_ID}`,
     });
@@ -102,7 +109,7 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
     setBookingConfig({
       maxGuestsPerUnit: 3,
       baseGuestsPerUnit: 2,
-      extraPersonFee: 60,
+      extraPersonFee: parseFloat(kasbahExperience.Extra_Person_EUR || "0"),
       maxNights: 5,
       maxUnits: 3,
       unitLabel: "room",
@@ -122,7 +129,7 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
     setBookingConfig({
       maxGuestsPerUnit: 4,
       baseGuestsPerUnit: 2,
-      extraPersonFee: tent.Level?.toLowerCase().includes("boutique") ? 150 : 100,
+      extraPersonFee: parseFloat(tent.Extra_Person_EUR || "0"),
       maxNights: 3,
       maxUnits: 4,
       unitLabel: "tent",
