@@ -202,7 +202,7 @@ export default function TheDesertCampPage() {
               {tents.map((tent, index) => (
                 <div 
                   key={tent.Tent_ID}
-                  className={index === 0 ? "bg-sand p-8" : "bg-foreground text-sand p-8"}
+                  className={`flex flex-col ${index === 0 ? "bg-sand p-8" : "bg-foreground text-sand p-8"}`}
                 >
                   <p className={`text-xs tracking-[0.3em] mb-2 ${index === 0 ? 'text-muted-foreground' : 'text-sand/60'}`}>
                     {tent.Level.toUpperCase()}
@@ -212,7 +212,8 @@ export default function TheDesertCampPage() {
                     {tent.Description}
                   </p>
                   
-                  <div className={`space-y-3 mb-8 ${index === 0 ? 'text-foreground/60' : 'text-sand/60'}`}>
+                  {/* Features - grows to fill space */}
+                  <div className={`space-y-3 flex-grow ${index === 0 ? 'text-foreground/60' : 'text-sand/60'}`}>
                     {tent.features.map((feature, i) => {
                       const icon = getIconForFeature(feature);
                       return (
@@ -226,7 +227,8 @@ export default function TheDesertCampPage() {
                     })}
                   </div>
 
-                  <div className={`pt-6 border-t ${index === 0 ? 'border-foreground/10' : 'border-sand/20'}`}>
+                  {/* Pricing - always at bottom */}
+                  <div className={`pt-6 mt-8 border-t ${index === 0 ? 'border-foreground/10' : 'border-sand/20'}`}>
                     <p className={`text-xs tracking-widest mb-2 ${index === 0 ? 'text-foreground/60' : 'text-sand/60'}`}>FROM</p>
                     <p className="font-serif text-2xl mb-4">
                       {formatPrice(parseFloat(tent.Price_EUR))} 
