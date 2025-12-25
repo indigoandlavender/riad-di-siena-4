@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Script from "next/script";
 import BookingModal from "@/components/BookingModal";
 import GalleryCarousel from "@/components/GalleryCarousel";
 import { useCurrency } from "@/components/CurrencyContext";
+import ElfsightWidget, { ElfsightScript } from "@/components/ElfsightWidget";
 
 interface Room {
   Room_ID: string;
@@ -234,14 +234,14 @@ export default function RoomsPage() {
                 <p className="text-xs tracking-widest text-muted-foreground mb-6 text-center">
                   {room.Name.toUpperCase()}
                 </p>
-                <div className={`elfsight-app-${room.Widget_ID}`} data-elfsight-app-lazy />
+                <ElfsightWidget widgetId={room.Widget_ID!} />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <Script src="https://static.elfsight.com/platform/platform.js" strategy="lazyOnload" />
+      <ElfsightScript />
 
       {selectedRoom && (
         <BookingModal
