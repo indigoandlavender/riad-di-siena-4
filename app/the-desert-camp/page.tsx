@@ -274,6 +274,7 @@ export default function TheDesertCampPage() {
           priceEUR: selectedTent.Price_EUR,
         } : { id: "", name: "", priceEUR: "0" }}
         config={{
+          maxGuests: 4,
           maxNights: 3,
           maxUnits: 4,
           unitLabel: "tent",
