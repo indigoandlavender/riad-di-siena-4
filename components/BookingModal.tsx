@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 declare global {
   interface Window {
@@ -82,7 +82,6 @@ function BookingModalContent({
     maxGuests = 2,
     hasCityTax = false,
     cityTaxPerNight = 2.5,
-    paypalContainerId = "paypal-container",
   } = config;
 
   // State
@@ -98,6 +97,10 @@ function BookingModalContent({
   const [paypalReady, setPaypalReady] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookedDates, setBookedDates] = useState<string[]>([]);
+
+  // Ref for PayPal container - keeps it outside React's DOM management
+  const paypalContainerRef = useRef<HTMLDivElement>(null);
+  const paypalButtonsRendered = useRef(false);
 
   // Calculate nights
   const nights = checkIn && checkOut
@@ -116,7 +119,6 @@ function BookingModalContent({
         .then(res => res.json())
         .then(data => {
           if (data.bookedDates) {
-            // Convert to simple date strings for comparison
             const dates: string[] = [];
             data.bookedDates.forEach((booking: { start: string; end: string }) => {
               const start = new Date(booking.start);
@@ -132,68 +134,7 @@ function BookingModalContent({
     }
   }, [item.iCalURL]);
 
-  // Load PayPal when on step 3
-  useEffect(() => {
-    if (step !== 3) return;
-
-    const loadPayPal = () => {
-      const container = document.getElementById(paypalContainerId);
-      if (!container || !window.paypal) return;
-
-      container.innerHTML = "";
-      
-      window.paypal.Buttons({
-        style: { layout: "vertical", color: "black", shape: "rect", label: "pay", height: 50 },
-        createOrder: (_: any, actions: any) => {
-          return actions.order.create({
-            purchase_units: [{
-              description: `${item.name} - ${nights} nights`,
-              amount: { value: total.toFixed(2), currency_code: "EUR" },
-            }],
-          });
-        },
-        onApprove: async (_: any, actions: any) => {
-          const order = await actions.order.capture();
-          await handlePaymentSuccess(order.id);
-        },
-        onError: (err: any) => {
-          console.error("PayPal error:", err);
-          alert("Payment failed. Please try again.");
-        },
-      }).render(`#${paypalContainerId}`);
-    };
-
-    // Check if PayPal is already loaded
-    if (window.paypal) {
-      setPaypalReady(true);
-      setTimeout(loadPayPal, 100);
-      return;
-    }
-
-    // Load PayPal script
-    const existingScript = document.querySelector('script[src*="paypal.com/sdk"]');
-    if (existingScript) {
-      const checkPayPal = setInterval(() => {
-        if (window.paypal) {
-          clearInterval(checkPayPal);
-          setPaypalReady(true);
-          loadPayPal();
-        }
-      }, 100);
-      return () => clearInterval(checkPayPal);
-    }
-
-    const script = document.createElement("script");
-    script.src = `https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=EUR`;
-    script.async = true;
-    script.onload = () => {
-      setPaypalReady(true);
-      loadPayPal();
-    };
-    document.body.appendChild(script);
-  }, [step, paypalClientId, paypalContainerId, item.name, nights, total]);
-
-  const handlePaymentSuccess = async (transactionId: string) => {
+  const handlePaymentSuccess = useCallback(async (transactionId: string) => {
     setIsSubmitting(true);
 
     const bookingData = {
@@ -229,7 +170,89 @@ function BookingModalContent({
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [item.id, item.name, checkIn, checkOut, nights, guests, total, firstName, lastName, email, phone, message, onBookingComplete]);
+
+  // Load PayPal script and render buttons when on step 3
+  useEffect(() => {
+    if (step !== 3) {
+      paypalButtonsRendered.current = false;
+      return;
+    }
+
+    // Already rendered
+    if (paypalButtonsRendered.current) return;
+
+    const renderButtons = () => {
+      if (!paypalContainerRef.current || !window.paypal) return;
+      if (paypalButtonsRendered.current) return;
+
+      // Clear container using DOM API (not React)
+      while (paypalContainerRef.current.firstChild) {
+        paypalContainerRef.current.removeChild(paypalContainerRef.current.firstChild);
+      }
+
+      paypalButtonsRendered.current = true;
+
+      window.paypal.Buttons({
+        style: { 
+          layout: "vertical", 
+          color: "black", 
+          shape: "rect", 
+          label: "pay", 
+          height: 50 
+        },
+        createOrder: (_: any, actions: any) => {
+          return actions.order.create({
+            purchase_units: [{
+              description: `${item.name} - ${nights} nights`,
+              amount: { value: total.toFixed(2), currency_code: "EUR" },
+            }],
+          });
+        },
+        onApprove: async (_: any, actions: any) => {
+          const order = await actions.order.capture();
+          await handlePaymentSuccess(order.id);
+        },
+        onError: (err: any) => {
+          console.error("PayPal error:", err);
+          alert("Payment failed. Please try again.");
+        },
+      }).render(paypalContainerRef.current);
+    };
+
+    // If PayPal is already loaded
+    if (window.paypal) {
+      setPaypalReady(true);
+      // Small delay to ensure DOM is ready
+      requestAnimationFrame(() => {
+        renderButtons();
+      });
+      return;
+    }
+
+    // Check if script is already in DOM
+    const existingScript = document.querySelector('script[src*="paypal.com/sdk"]');
+    if (existingScript) {
+      const checkPayPal = setInterval(() => {
+        if (window.paypal) {
+          clearInterval(checkPayPal);
+          setPaypalReady(true);
+          renderButtons();
+        }
+      }, 100);
+      return () => clearInterval(checkPayPal);
+    }
+
+    // Load PayPal script
+    const script = document.createElement("script");
+    script.src = `https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=EUR`;
+    script.async = true;
+    script.onload = () => {
+      setPaypalReady(true);
+      renderButtons();
+    };
+    document.body.appendChild(script);
+  }, [step, paypalClientId, item.name, nights, total, handlePaymentSuccess]);
 
   // Get min date (today)
   const today = new Date().toISOString().split("T")[0];
@@ -238,7 +261,10 @@ function BookingModalContent({
   const isDateBooked = (dateStr: string) => bookedDates.includes(dateStr);
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+    <div 
+      className="fixed inset-0 flex items-center justify-center"
+      style={{ zIndex: 9999 }}
+    >
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/60"
@@ -246,7 +272,10 @@ function BookingModalContent({
       />
 
       {/* Modal */}
-      <div className="relative bg-[#f8f5f0] w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+      <div 
+        className="relative w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto"
+        style={{ backgroundColor: "#f8f5f0" }}
+      >
         {/* Close button */}
         <button
           onClick={onClose}
@@ -421,7 +450,12 @@ function BookingModalContent({
                 </div>
               </div>
 
-              <div id={paypalContainerId} className="mb-4 min-h-[50px]">
+              {/* PayPal container - using ref instead of id */}
+              <div 
+                ref={paypalContainerRef} 
+                className="mb-4 min-h-[50px]"
+                suppressHydrationWarning
+              >
                 {!paypalReady && (
                   <div className="flex justify-center py-4">
                     <div className="w-6 h-6 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
