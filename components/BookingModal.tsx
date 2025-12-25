@@ -43,7 +43,171 @@ export interface BookingModalProps {
 }
 
 // ============================================================================
-// PAYPAL COMPONENT - Isolated with proper cleanup
+// CALENDAR COMPONENT
+// ============================================================================
+
+function Calendar({
+  selectedCheckIn,
+  selectedCheckOut,
+  onSelectDate,
+  bookedDates,
+  selectCheckout,
+}: {
+  selectedCheckIn: string;
+  selectedCheckOut: string;
+  onSelectDate: (date: string) => void;
+  bookedDates: string[];
+  selectCheckout: boolean;
+}) {
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDay = firstDay.getDay();
+    return { daysInMonth, startingDay };
+  };
+
+  const formatDateStr = (year: number, month: number, day: number) => {
+    return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  };
+
+  const isBooked = (dateStr: string) => bookedDates.includes(dateStr);
+
+  const isPast = (year: number, month: number, day: number) => {
+    const date = new Date(year, month, day);
+    return date < today;
+  };
+
+  const isInRange = (dateStr: string) => {
+    if (!selectedCheckIn || !selectedCheckOut) return false;
+    return dateStr > selectedCheckIn && dateStr < selectedCheckOut;
+  };
+
+  const { daysInMonth, startingDay } = getDaysInMonth(currentMonth);
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+
+  const monthNames = ["January", "February", "March", "April", "May", "June", 
+                      "July", "August", "September", "October", "November", "December"];
+
+  const prevMonth = () => {
+    const prev = new Date(year, month - 1, 1);
+    if (prev >= new Date(today.getFullYear(), today.getMonth(), 1)) {
+      setCurrentMonth(prev);
+    }
+  };
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(year, month + 1, 1));
+  };
+
+  const canGoPrev = new Date(year, month - 1, 1) >= new Date(today.getFullYear(), today.getMonth(), 1);
+
+  return (
+    <div>
+      {/* Month navigation */}
+      <div className="flex items-center justify-between mb-6">
+        <button
+          onClick={prevMonth}
+          disabled={!canGoPrev}
+          className="w-8 h-8 flex items-center justify-center text-foreground/40 hover:text-foreground disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <polyline points="10,2 5,8 10,14" />
+          </svg>
+        </button>
+        <span className="text-sm tracking-wide text-foreground/70">
+          {monthNames[month]} {year}
+        </span>
+        <button
+          onClick={nextMonth}
+          className="w-8 h-8 flex items-center justify-center text-foreground/40 hover:text-foreground transition-colors"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <polyline points="6,2 11,8 6,14" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Day headers */}
+      <div className="grid grid-cols-7 mb-2">
+        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
+          <div key={day} className="text-center text-[10px] tracking-wider text-foreground/30 uppercase">
+            {day}
+          </div>
+        ))}
+      </div>
+
+      {/* Calendar grid */}
+      <div className="grid grid-cols-7 gap-1">
+        {/* Empty cells for days before month starts */}
+        {Array.from({ length: startingDay }).map((_, i) => (
+          <div key={`empty-${i}`} className="aspect-square" />
+        ))}
+
+        {/* Days of the month */}
+        {Array.from({ length: daysInMonth }).map((_, i) => {
+          const day = i + 1;
+          const dateStr = formatDateStr(year, month, day);
+          const isBookedDate = isBooked(dateStr);
+          const isPastDate = isPast(year, month, day);
+          const isCheckIn = dateStr === selectedCheckIn;
+          const isCheckOut = dateStr === selectedCheckOut;
+          const isRange = isInRange(dateStr);
+          const isDisabled = isPastDate || isBookedDate;
+
+          return (
+            <button
+              key={day}
+              onClick={() => !isDisabled && onSelectDate(dateStr)}
+              disabled={isDisabled}
+              className={`
+                aspect-square flex items-center justify-center text-sm relative transition-all
+                ${isDisabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-foreground/5"}
+                ${isCheckIn || isCheckOut ? "bg-foreground text-[#f8f5f0]" : ""}
+                ${isRange ? "bg-foreground/10" : ""}
+                ${isPastDate ? "text-foreground/20" : ""}
+                ${isBookedDate && !isPastDate ? "text-foreground/30" : ""}
+                ${!isDisabled && !isCheckIn && !isCheckOut && !isRange ? "text-foreground/70" : ""}
+              `}
+            >
+              <span className="relative z-10">{day}</span>
+              {/* Unavailable indicator */}
+              {isBookedDate && !isPastDate && (
+                <div className="absolute inset-1 border border-foreground/20 bg-foreground/5" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Legend */}
+      <div className="flex items-center gap-6 mt-6 pt-4 border-t border-foreground/10">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-foreground" />
+          <span className="text-[10px] tracking-wide text-foreground/40 uppercase">Selected</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 border border-foreground/20 bg-foreground/5" />
+          <span className="text-[10px] tracking-wide text-foreground/40 uppercase">Unavailable</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// PAYPAL COMPONENT
 // ============================================================================
 
 function PayPalButton({
@@ -157,9 +321,7 @@ function PayPalButton({
       if (buttonsInstance.current && typeof buttonsInstance.current.close === "function") {
         try {
           buttonsInstance.current.close();
-        } catch (e) {
-          // Ignore cleanup errors
-        }
+        } catch (e) {}
       }
       buttonsInstance.current = null;
     };
@@ -186,7 +348,7 @@ function PayPalButton({
 }
 
 // ============================================================================
-// QUANTITY SELECTOR COMPONENT
+// QUANTITY SELECTOR
 // ============================================================================
 
 function QuantitySelector({
@@ -296,8 +458,50 @@ function BookingModalContent({
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookedDates, setBookedDates] = useState<string[]>([]);
 
-  // Calculate nights from dates if selectCheckout is true
+  // Fetch booked dates from iCal
+  useEffect(() => {
+    if (item.iCalURL) {
+      fetch(`/api/ical?url=${encodeURIComponent(item.iCalURL)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.bookedDates && Array.isArray(data.bookedDates)) {
+            const dates: string[] = [];
+            data.bookedDates.forEach((booking: { start: string; end: string }) => {
+              const start = new Date(booking.start);
+              const end = new Date(booking.end);
+              for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                dates.push(d.toISOString().split("T")[0]);
+              }
+            });
+            setBookedDates(dates);
+          }
+        })
+        .catch((err) => console.error("Failed to fetch availability:", err));
+    }
+  }, [item.iCalURL]);
+
+  // Handle date selection
+  const handleDateSelect = (dateStr: string) => {
+    if (selectCheckout) {
+      // Date range mode: first click = check-in, second = check-out
+      if (!checkIn || (checkIn && checkOut)) {
+        setCheckIn(dateStr);
+        setCheckOut("");
+      } else if (dateStr > checkIn) {
+        setCheckOut(dateStr);
+      } else {
+        setCheckIn(dateStr);
+        setCheckOut("");
+      }
+    } else {
+      // Single date mode (arrival only)
+      setCheckIn(dateStr);
+    }
+  };
+
+  // Calculate nights
   const calculatedNights = selectCheckout && checkIn && checkOut
     ? Math.max(1, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)))
     : nights;
@@ -307,7 +511,9 @@ function BookingModalContent({
   const cityTax = hasCityTax ? cityTaxPerNight * guests * calculatedNights : 0;
   const total = subtotal + cityTax;
 
-  const today = new Date().toISOString().split("T")[0];
+  const canProceedStep1 = selectCheckout
+    ? checkIn && checkOut && calculatedNights >= 1
+    : checkIn && nights >= 1;
 
   const handlePaymentSuccess = useCallback(async (transactionId: string) => {
     setIsSubmitting(true);
@@ -375,12 +581,15 @@ function BookingModalContent({
     setMessage("");
   }, [item.id]);
 
-  const canProceedStep1 = selectCheckout 
-    ? checkIn && checkOut && calculatedNights >= 1
-    : checkIn && nights >= 1;
+  // Format date for display
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -388,7 +597,7 @@ function BookingModalContent({
       />
 
       {/* Modal */}
-      <div className="relative bg-[#f8f5f0] w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div className="relative bg-[#f8f5f0] w-full max-w-md mx-4 shadow-2xl overflow-hidden">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -404,53 +613,58 @@ function BookingModalContent({
           {/* Header */}
           <div className="mb-8">
             <h2 className="font-serif text-2xl text-foreground/90 mb-1">{item.name}</h2>
-            <p className="text-sm text-foreground/50">{formatPrice(pricePerNight)} per {unitLabel} per night</p>
+            <p className="text-sm text-foreground/50">{formatPrice(pricePerNight)} per night</p>
           </div>
 
-          {/* Step 1: Dates & Quantity */}
+          {/* Step 1: Dates */}
           {step === 1 && (
             <div>
-              <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-6">Step 1 of 3 — Select dates</p>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-6">
+                Step 1 of 3 — {selectCheckout ? "Select dates" : "Select arrival"}
+              </p>
 
-              {/* Check-in */}
-              <div className="mb-4">
-                <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Check-in</label>
-                <input
-                  type="date"
-                  value={checkIn}
-                  min={today}
-                  onChange={(e) => {
-                    setCheckIn(e.target.value);
-                    if (checkOut && e.target.value >= checkOut) setCheckOut("");
-                  }}
-                  className="w-full py-3 bg-transparent border-b border-foreground/20 focus:border-foreground/40 focus:outline-none text-foreground transition-colors"
-                />
-              </div>
+              {/* Calendar */}
+              <Calendar
+                selectedCheckIn={checkIn}
+                selectedCheckOut={checkOut}
+                onSelectDate={handleDateSelect}
+                bookedDates={bookedDates}
+                selectCheckout={selectCheckout}
+              />
 
-              {/* Check-out or Nights */}
-              {selectCheckout ? (
-                <div className="mb-6">
-                  <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Check-out</label>
-                  <input
-                    type="date"
-                    value={checkOut}
-                    min={checkIn || today}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                    className="w-full py-3 bg-transparent border-b border-foreground/20 focus:border-foreground/40 focus:outline-none text-foreground transition-colors"
-                  />
+              {/* Selected dates display */}
+              {checkIn && (
+                <div className="mt-6 pt-6 border-t border-foreground/10">
+                  <div className="flex items-center justify-between text-sm">
+                    <div>
+                      <span className="text-foreground/40">Check-in: </span>
+                      <span className="text-foreground/80">{formatDate(checkIn)}</span>
+                    </div>
+                    {selectCheckout && checkOut && (
+                      <div>
+                        <span className="text-foreground/40">Check-out: </span>
+                        <span className="text-foreground/80">{formatDate(checkOut)}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ) : (
-                <QuantitySelector
-                  label="Nights"
-                  value={nights}
-                  min={1}
-                  max={maxNights}
-                  onChange={setNights}
-                />
               )}
 
-              {/* Units (if more than 1 allowed) */}
-              {maxUnits > 1 && (
+              {/* Nights selector (if not selectCheckout) */}
+              {!selectCheckout && checkIn && (
+                <div className="mt-4">
+                  <QuantitySelector
+                    label="Nights"
+                    value={nights}
+                    min={1}
+                    max={maxNights}
+                    onChange={setNights}
+                  />
+                </div>
+              )}
+
+              {/* Units selector */}
+              {maxUnits > 1 && checkIn && (
                 <QuantitySelector
                   label={`${unitLabel.charAt(0).toUpperCase() + unitLabel.slice(1)}s`}
                   value={units}
@@ -460,8 +674,8 @@ function BookingModalContent({
                 />
               )}
 
-              {/* Guests */}
-              {maxGuests > 1 && (
+              {/* Guests selector */}
+              {maxGuests > 1 && checkIn && (
                 <QuantitySelector
                   label="Guests"
                   value={guests}
@@ -473,7 +687,7 @@ function BookingModalContent({
 
               {/* Price summary */}
               {canProceedStep1 && (
-                <div className="mt-8 pt-6 border-t border-foreground/10">
+                <div className="mt-6 pt-6 border-t border-foreground/10">
                   <div className="flex justify-between text-sm mb-2">
                     <span className="text-foreground/50">
                       {formatPrice(pricePerNight)} × {calculatedNights} night{calculatedNights > 1 ? "s" : ""}
@@ -513,7 +727,7 @@ function BookingModalContent({
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">First name</label>
+                    <label className="block text-[10px] tracking-wider uppercase text-foreground/40 mb-2">First name</label>
                     <input
                       type="text"
                       value={firstName}
@@ -522,7 +736,7 @@ function BookingModalContent({
                     />
                   </div>
                   <div>
-                    <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Last name</label>
+                    <label className="block text-[10px] tracking-wider uppercase text-foreground/40 mb-2">Last name</label>
                     <input
                       type="text"
                       value={lastName}
@@ -533,7 +747,7 @@ function BookingModalContent({
                 </div>
 
                 <div>
-                  <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Email</label>
+                  <label className="block text-[10px] tracking-wider uppercase text-foreground/40 mb-2">Email</label>
                   <input
                     type="email"
                     value={email}
@@ -543,7 +757,9 @@ function BookingModalContent({
                 </div>
 
                 <div>
-                  <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Phone <span className="normal-case text-foreground/30">(optional)</span></label>
+                  <label className="block text-[10px] tracking-wider uppercase text-foreground/40 mb-2">
+                    Phone <span className="normal-case text-foreground/30">(optional)</span>
+                  </label>
                   <input
                     type="tel"
                     value={phone}
@@ -553,7 +769,9 @@ function BookingModalContent({
                 </div>
 
                 <div>
-                  <label className="block text-xs tracking-wider uppercase text-foreground/40 mb-2">Special requests <span className="normal-case text-foreground/30">(optional)</span></label>
+                  <label className="block text-[10px] tracking-wider uppercase text-foreground/40 mb-2">
+                    Special requests <span className="normal-case text-foreground/30">(optional)</span>
+                  </label>
                   <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
@@ -597,7 +815,7 @@ function BookingModalContent({
               <div className="bg-foreground/[0.03] p-6 mb-6">
                 <p className="font-serif text-lg text-foreground/90 mb-1">{item.name}</p>
                 <p className="text-sm text-foreground/50 mb-4">
-                  {checkIn} {selectCheckout && checkOut ? `→ ${checkOut}` : ""} · {calculatedNights} night{calculatedNights > 1 ? "s" : ""} · {guests} guest{guests > 1 ? "s" : ""}
+                  {formatDate(checkIn)} {selectCheckout && checkOut ? `→ ${formatDate(checkOut)}` : ""} · {calculatedNights} night{calculatedNights > 1 ? "s" : ""} · {guests} guest{guests > 1 ? "s" : ""}
                   {units > 1 && ` · ${units} ${unitLabel}s`}
                 </p>
                 <div className="flex justify-between pt-4 border-t border-foreground/10">
@@ -644,7 +862,7 @@ function BookingModalContent({
               </p>
               <button
                 onClick={onClose}
-                className="text-xs tracking-[0.2em] uppercase text-foreground/50 hover:text-foreground transition-colors"
+                className="text-[10px] tracking-[0.2em] uppercase text-foreground/50 hover:text-foreground transition-colors"
               >
                 Close
               </button>
