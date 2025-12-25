@@ -219,8 +219,10 @@ export default function SlowWaySouth({
         }}
         config={{
           maxNights: journey.durationDays || 3,
-          maxUnits: 4,
+          maxUnits: 1,
           unitLabel: "person",
+          maxGuestsPerUnit: 6,
+          baseGuestsPerUnit: 2,
           selectCheckout: false,
           propertyName: "Slow Morocco",
           paypalContainerId: `paypal-${journey.slug || journeySlug}`,
