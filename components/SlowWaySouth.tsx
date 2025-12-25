@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import ExperienceBookingModal from "./ExperienceBookingModal";
+import BookingModal from "./BookingModal";
+import { useCurrency } from "./CurrencyContext";
 
 // The Slow Way South - Syndication Component
 // Pulls the 3-Day Sahara Circle journey data from Slow Morocco
@@ -17,6 +18,7 @@ export default function SlowWaySouth({
   ctaUrl = "https://slowmorocco.com/journeys/3-Day-Sahara-Circle",
   ctaText = "The Full Journey"
 }: SlowWaySouthProps) {
+  const { formatPrice } = useCurrency();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [heroImage, setHeroImage] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -36,16 +38,6 @@ export default function SlowWaySouth({
         setLoading(false);
       });
   }, []);
-
-  // Journey details for the booking modal
-  const journeyExperience = {
-    Package_ID: "sahara-circle-3day",
-    Name: "The Slow Way South - 3-Day Sahara Circle",
-    Price_EUR: "600",
-    Single_Supplement_EUR: "150",
-    Duration: "3 days",
-    Min_Guests: "2"
-  };
 
   return (
     <section className="bg-sand">
@@ -164,11 +156,24 @@ export default function SlowWaySouth({
       </div>
 
       {/* Booking Modal */}
-      <ExperienceBookingModal
+      <BookingModal
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
-        experience={journeyExperience}
-        propertyName="Slow Morocco"
+        item={{
+          id: "sahara-circle-3day",
+          name: "The Slow Way South - 3-Day Sahara Circle",
+          priceEUR: "600",
+        }}
+        config={{
+          maxNights: 3,
+          maxUnits: 4,
+          unitLabel: "person",
+          selectCheckout: false,
+          propertyName: "Slow Morocco",
+          paypalContainerId: "paypal-slow-way-south",
+        }}
+        formatPrice={formatPrice}
+        paypalClientId="AWVf28iPmlVmaEyibiwkOtdXAl5UPqL9i8ee9yStaG6qb7hCwNRB2G95SYwbcikLnBox6CGyO-boyAvu"
       />
     </section>
   );
