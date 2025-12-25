@@ -47,7 +47,20 @@ export default function SlowWaySouth({
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [journey, setJourney] = useState<Journey | null>(null);
   const [itinerary, setItinerary] = useState<ItineraryDay[]>([]);
+  const [bannerTitle, setBannerTitle] = useState("The Slow Journey South");
   const [loading, setLoading] = useState(true);
+
+  // Fetch settings for banner title
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((settings) => {
+        if (settings.journey_banner_title) {
+          setBannerTitle(settings.journey_banner_title);
+        }
+      })
+      .catch((err) => console.error("Error fetching settings:", err));
+  }, []);
 
   useEffect(() => {
     fetch(`https://www.slowmorocco.com/api/journeys/${journeySlug}`)
@@ -111,7 +124,7 @@ export default function SlowWaySouth({
               </p>
             )}
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl mb-4">
-              {journey.title}
+              {bannerTitle}
             </h2>
             {journey.arcDescription && (
               <p className="max-w-xl text-white/90 leading-relaxed">
@@ -214,7 +227,7 @@ export default function SlowWaySouth({
         onClose={() => setIsBookingOpen(false)}
         item={{
           id: journey.slug || journeySlug,
-          name: journey.title,
+          name: bannerTitle,
           priceEUR: String(pricePerPerson),
         }}
         config={{
