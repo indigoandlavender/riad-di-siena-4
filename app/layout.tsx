@@ -100,7 +100,7 @@ export default function RootLayout({
           })}
         </Script>
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <CurrencyProvider>
           <Header />
           <main>{children}</main>
