@@ -184,7 +184,7 @@ function Calendar({
               <span className="relative z-10">{day}</span>
               {/* Unavailable indicator */}
               {isBookedDate && !isPastDate && (
-                <div className="absolute inset-1 border border-foreground/20 bg-foreground/5" />
+                <div className="absolute inset-0 bg-foreground/10" />
               )}
             </button>
           );
@@ -590,6 +590,16 @@ function BookingModalContent({
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+      {/* Animation styles */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+      `}</style>
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -618,7 +628,7 @@ function BookingModalContent({
 
           {/* Step 1: Dates */}
           {step === 1 && (
-            <div>
+            <div className="animate-fadeIn">
               <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-6">
                 Step 1 of 3 — {selectCheckout ? "Select dates" : "Select arrival"}
               </p>
@@ -721,7 +731,7 @@ function BookingModalContent({
 
           {/* Step 2: Guest Details */}
           {step === 2 && (
-            <div>
+            <div className="animate-fadeIn">
               <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-6">Step 2 of 3 — Your details</p>
 
               <div className="space-y-4">
@@ -808,19 +818,35 @@ function BookingModalContent({
 
           {/* Step 3: Payment */}
           {step === 3 && (
-            <div>
+            <div className="animate-fadeIn">
               <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 mb-6">Step 3 of 3 — Payment</p>
 
-              {/* Booking summary */}
+              {/* Booking summary with details */}
               <div className="bg-foreground/[0.03] p-6 mb-6">
-                <p className="font-serif text-lg text-foreground/90 mb-1">{item.name}</p>
+                <p className="font-serif text-lg text-foreground/90 mb-3">{item.name}</p>
                 <p className="text-sm text-foreground/50 mb-4">
-                  {formatDate(checkIn)} {selectCheckout && checkOut ? `→ ${formatDate(checkOut)}` : ""} · {calculatedNights} night{calculatedNights > 1 ? "s" : ""} · {guests} guest{guests > 1 ? "s" : ""}
-                  {units > 1 && ` · ${units} ${unitLabel}s`}
+                  {formatDate(checkIn)} {selectCheckout && checkOut ? `→ ${formatDate(checkOut)}` : ""}
                 </p>
-                <div className="flex justify-between pt-4 border-t border-foreground/10">
-                  <span className="text-foreground/70">Total</span>
-                  <span className="font-medium text-foreground">{formatPrice(total)}</span>
+                
+                {/* Detailed breakdown */}
+                <div className="space-y-2 pt-4 border-t border-foreground/10">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-foreground/50">
+                      {calculatedNights} night{calculatedNights > 1 ? "s" : ""} × {guests} guest{guests > 1 ? "s" : ""}
+                      {units > 1 && ` × ${units} ${unitLabel}s`}
+                    </span>
+                    <span className="text-foreground/70">{formatPrice(subtotal)}</span>
+                  </div>
+                  {hasCityTax && cityTax > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-foreground/50">City tax</span>
+                      <span className="text-foreground/70">€{cityTax.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-base pt-3 border-t border-foreground/10 mt-3">
+                    <span className="font-medium text-foreground/80">Total</span>
+                    <span className="font-medium text-foreground">{formatPrice(total)}</span>
+                  </div>
                 </div>
               </div>
 
@@ -850,7 +876,7 @@ function BookingModalContent({
 
           {/* Step 4: Success */}
           {step === 4 && (
-            <div className="text-center py-8">
+            <div className="text-center py-8 animate-fadeIn">
               <div className="w-16 h-16 border border-foreground/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <polyline points="6,14 12,20 22,8" />
