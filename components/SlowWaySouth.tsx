@@ -103,7 +103,7 @@ export default function SlowWaySouth({
   ].filter(Boolean).join(" · ");
 
   return (
-    <section className="bg-sand">
+    <section id="the-journey" className="bg-sand">
       {/* Immersive Hero Image */}
       <div className="relative h-[70vh] bg-[#e8e0d4]">
         {journey.heroImage && (
