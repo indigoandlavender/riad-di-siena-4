@@ -48,15 +48,19 @@ export default function SlowWaySouth({
   const [journey, setJourney] = useState<Journey | null>(null);
   const [itinerary, setItinerary] = useState<ItineraryDay[]>([]);
   const [bannerTitle, setBannerTitle] = useState("The Slow Journey South");
+  const [journeyPrice, setJourneyPrice] = useState(1200);
   const [loading, setLoading] = useState(true);
 
-  // Fetch settings for banner title
+  // Fetch settings for banner title and price
   useEffect(() => {
     fetch("/api/settings")
       .then((res) => res.json())
       .then((settings) => {
         if (settings.journey_banner_title) {
           setBannerTitle(settings.journey_banner_title);
+        }
+        if (settings.journey_price) {
+          setJourneyPrice(parseFloat(settings.journey_price) || 1200);
         }
       })
       .catch((err) => console.error("Error fetching settings:", err));
@@ -97,9 +101,6 @@ export default function SlowWaySouth({
     journey.durationDays ? `${journey.durationDays} Days` : "",
     journey.focus || "",
   ].filter(Boolean).join(" · ");
-
-  // Calculate price per person (assuming price is total for 2)
-  const pricePerPerson = journey.price ? Math.round(parseFloat(journey.price) / 2) : 600;
 
   return (
     <section className="bg-sand">
@@ -167,16 +168,12 @@ export default function SlowWaySouth({
           {/* CTA */}
           <div className="text-center">
             {/* Price */}
-            {journey.price && (
-              <>
-                <p className="text-2xl font-serif mb-2">
-                  {formatPrice(parseFloat(journey.price))}
-                </p>
-                <p className="text-sm text-muted-foreground mb-8">
-                  for 2 guests / all meals included
-                </p>
-              </>
-            )}
+            <p className="text-2xl font-serif mb-2">
+              {formatPrice(journeyPrice)}
+            </p>
+            <p className="text-sm text-muted-foreground mb-8">
+              for 2 guests / all meals included
+            </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
               <Link
@@ -228,14 +225,13 @@ export default function SlowWaySouth({
         item={{
           id: journey.slug || journeySlug,
           name: bannerTitle,
-          priceEUR: String(pricePerPerson),
+          priceEUR: String(journeyPrice),
         }}
         config={{
-          maxNights: journey.durationDays || 3,
+          maxNights: 1,
           maxUnits: 1,
-          unitLabel: "person",
-          maxGuestsPerUnit: 6,
-          baseGuestsPerUnit: 2,
+          maxGuestsPerUnit: 1,
+          baseGuestsPerUnit: 1,
           selectCheckout: false,
           propertyName: "Slow Morocco",
           paypalContainerId: `paypal-${journey.slug || journeySlug}`,

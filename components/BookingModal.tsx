@@ -32,6 +32,7 @@ export interface BookingConfig {
   selectCheckout?: boolean;
   propertyName?: string;
   paypalContainerId?: string;
+  isPerPersonPricing?: boolean; // For journeys: price × guests instead of price × nights
 }
 
 export interface BookingModalProps {
@@ -448,6 +449,7 @@ function BookingModalContent({
     cityTaxPerNight = 2.5,
     extraPersonFee = 0,
     selectCheckout = true,
+    isPerPersonPricing = false,
   } = config;
 
   const [step, setStep] = useState(1);
@@ -516,15 +518,20 @@ function BookingModalContent({
 
   // Pricing calculations
   const pricePerNight = parseFloat(item.priceEUR) || 0;
-  const subtotal = pricePerNight * calculatedNights * units;
-  const extraGuests = Math.max(0, guests - baseGuests);
+  
+  // Per-person pricing mode (for journeys): price × guests
+  // Standard mode (for rooms): price × nights × units + extras
+  const subtotal = isPerPersonPricing 
+    ? pricePerNight * guests 
+    : pricePerNight * calculatedNights * units;
+  const extraGuests = isPerPersonPricing ? 0 : Math.max(0, guests - baseGuests);
   const extraGuestsCost = extraGuests * extraPersonFee * calculatedNights;
-  const cityTax = hasCityTax ? cityTaxPerNight * guests * calculatedNights : 0;
+  const cityTax = (hasCityTax && !isPerPersonPricing) ? cityTaxPerNight * guests * calculatedNights : 0;
   const total = subtotal + extraGuestsCost + cityTax;
 
-  const canProceedStep1 = selectCheckout
-    ? checkIn && checkOut && calculatedNights >= 1
-    : checkIn && nights >= 1;
+  const canProceedStep1 = isPerPersonPricing
+    ? checkIn && guests >= 1
+    : (selectCheckout ? checkIn && checkOut && calculatedNights >= 1 : checkIn && nights >= 1);
 
   const handlePaymentSuccess = useCallback(async (transactionId: string) => {
     setIsSubmitting(true);
@@ -641,7 +648,11 @@ function BookingModalContent({
           {/* Header */}
           <div className="mb-8">
             <h2 className="font-serif text-2xl text-foreground/90 mb-1">{item.name}</h2>
-            <p className="text-sm text-foreground/50">{formatPrice(pricePerNight)} per night</p>
+            {maxNights > 1 || hasCityTax || maxGuestsPerUnit > baseGuestsPerUnit ? (
+              <p className="text-sm text-foreground/50">{formatPrice(pricePerNight)} per night</p>
+            ) : (
+              <p className="text-sm text-foreground/50">{formatPrice(pricePerNight)}</p>
+            )}
           </div>
 
           {/* Step 1: Dates */}
@@ -678,8 +689,8 @@ function BookingModalContent({
                 </div>
               )}
 
-              {/* Nights selector (if not selectCheckout) */}
-              {!selectCheckout && checkIn && (
+              {/* Nights selector (if not selectCheckout and not per-person pricing and maxNights > 1) */}
+              {!selectCheckout && !isPerPersonPricing && maxNights > 1 && checkIn && (
                 <div className="mt-4">
                   <QuantitySelector
                     label="Nights"
@@ -716,31 +727,43 @@ function BookingModalContent({
               {/* Price summary */}
               {canProceedStep1 && (
                 <div className="mt-6 pt-6 border-t border-foreground/10">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-foreground/50">
-                      {formatPrice(pricePerNight)} × {calculatedNights} night{calculatedNights > 1 ? "s" : ""}
-                      {units > 1 && ` × ${units} ${unitLabel}s`}
-                    </span>
-                    <span className="text-foreground/70">{formatPrice(subtotal)}</span>
-                  </div>
-                  {extraGuests > 0 && extraPersonFee > 0 && (
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-foreground/50">
-                        Extra guest{extraGuests > 1 ? "s" : ""} ({extraGuests} × €{extraPersonFee})
-                      </span>
-                      <span className="text-foreground/70">€{extraGuestsCost.toFixed(2)}</span>
+                  {/* Simple display for fixed-price items (1 night, 1 unit, base guests) */}
+                  {calculatedNights === 1 && units === 1 && extraGuests === 0 && !hasCityTax ? (
+                    <div className="flex justify-between text-base">
+                      <span className="text-foreground/70">Total</span>
+                      <span className="font-medium text-foreground">{formatPrice(total)}</span>
                     </div>
+                  ) : (
+                    <>
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-foreground/50">
+                          {isPerPersonPricing 
+                            ? `${formatPrice(pricePerNight)} × ${guests} guest${guests > 1 ? "s" : ""}`
+                            : `${formatPrice(pricePerNight)} × ${calculatedNights} night${calculatedNights > 1 ? "s" : ""}${units > 1 ? ` × ${units} ${unitLabel}s` : ""}`
+                          }
+                        </span>
+                        <span className="text-foreground/70">{formatPrice(subtotal)}</span>
+                      </div>
+                      {extraGuests > 0 && extraPersonFee > 0 && (
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="text-foreground/50">
+                            Extra guest{extraGuests > 1 ? "s" : ""} ({extraGuests} × €{extraPersonFee})
+                          </span>
+                          <span className="text-foreground/70">€{extraGuestsCost.toFixed(2)}</span>
+                        </div>
+                      )}
+                      {hasCityTax && !isPerPersonPricing && (
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="text-foreground/50">City tax</span>
+                          <span className="text-foreground/70">€{cityTax.toFixed(2)}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between text-base pt-3 border-t border-foreground/10">
+                        <span className="text-foreground/70">Total</span>
+                        <span className="font-medium text-foreground">{formatPrice(total)}</span>
+                      </div>
+                    </>
                   )}
-                  {hasCityTax && (
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-foreground/50">City tax</span>
-                      <span className="text-foreground/70">€{cityTax.toFixed(2)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-base pt-3 border-t border-foreground/10">
-                    <span className="text-foreground/70">Total</span>
-                    <span className="font-medium text-foreground">{formatPrice(total)}</span>
-                  </div>
                 </div>
               )}
 
@@ -854,38 +877,50 @@ function BookingModalContent({
                   {formatDate(checkIn)} {selectCheckout && checkOut ? `→ ${formatDate(checkOut)}` : ""}
                 </p>
                 
-                {/* Detailed breakdown */}
+                {/* Detailed breakdown - simplified for fixed-price items */}
                 <div className="space-y-2 pt-4 border-t border-foreground/10">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-foreground/50">
-                      {units > 1 ? `${units} ${unitLabel}s × ` : ""}{calculatedNights} night{calculatedNights > 1 ? "s" : ""}
-                    </span>
-                    <span className="text-foreground/70">{formatPrice(subtotal)}</span>
-                  </div>
-                  {extraGuests > 0 && extraPersonFee > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-foreground/50">
-                        {extraGuests} extra guest{extraGuests > 1 ? "s" : ""} × {calculatedNights} night{calculatedNights > 1 ? "s" : ""}
-                      </span>
-                      <span className="text-foreground/70">€{extraGuestsCost.toFixed(2)}</span>
+                  {calculatedNights === 1 && units === 1 && extraGuests === 0 && !hasCityTax ? (
+                    <div className="flex justify-between text-base">
+                      <span className="font-medium text-foreground/80">Total</span>
+                      <span className="font-medium text-foreground">{formatPrice(total)}</span>
                     </div>
+                  ) : (
+                    <>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-foreground/50">
+                          {isPerPersonPricing 
+                            ? `${guests} guest${guests > 1 ? "s" : ""}`
+                            : `${units > 1 ? `${units} ${unitLabel}s × ` : ""}${calculatedNights} night${calculatedNights > 1 ? "s" : ""}`
+                          }
+                        </span>
+                        <span className="text-foreground/70">{formatPrice(subtotal)}</span>
+                      </div>
+                      {extraGuests > 0 && extraPersonFee > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-foreground/50">
+                            {extraGuests} extra guest{extraGuests > 1 ? "s" : ""} × {calculatedNights} night{calculatedNights > 1 ? "s" : ""}
+                          </span>
+                          <span className="text-foreground/70">€{extraGuestsCost.toFixed(2)}</span>
+                        </div>
+                      )}
+                      {hasCityTax && cityTax > 0 && !isPerPersonPricing && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-foreground/50">City tax</span>
+                          <span className="text-foreground/70">€{cityTax.toFixed(2)}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between text-base pt-3 border-t border-foreground/10 mt-3">
+                        <span className="font-medium text-foreground/80">Total</span>
+                        <span className="font-medium text-foreground">{formatPrice(total)}</span>
+                      </div>
+                    </>
                   )}
-                  {hasCityTax && cityTax > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-foreground/50">City tax</span>
-                      <span className="text-foreground/70">€{cityTax.toFixed(2)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-base pt-3 border-t border-foreground/10 mt-3">
-                    <span className="font-medium text-foreground/80">Total</span>
-                    <span className="font-medium text-foreground">{formatPrice(total)}</span>
-                  </div>
                 </div>
               </div>
 
               <PayPalButton
                 amount={total.toFixed(2)}
-                description={`${item.name} - ${calculatedNights} nights`}
+                description={`${item.name} - ${formatDate(checkIn)}`}
                 clientId={paypalClientId}
                 onSuccess={handlePaymentSuccess}
                 onError={handlePaymentError}
