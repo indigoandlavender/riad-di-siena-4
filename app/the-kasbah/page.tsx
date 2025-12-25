@@ -163,28 +163,26 @@ export default function TheKasbahPage() {
       {/* Beyond the Walls Navigation */}
       <BeyondTheWallsNav />
 
-      {/* Booking Modal */}
-      {experience && (
-        <BookingModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          item={{
-            id: experience.Package_ID,
-            name: experience.Name,
-            priceEUR: experience.Price_EUR,
-          }}
-          config={{
-            maxNights: 5,
-            maxUnits: 3,
-            unitLabel: "room",
-            selectCheckout: false,
-            propertyName: "The Kasbah",
-            paypalContainerId: "paypal-kasbah",
-          }}
-          formatPrice={formatPrice}
-          paypalClientId="AWVf28iPmlVmaEyibiwkOtdXAl5UPqL9i8ee9yStaG6qb7hCwNRB2G95SYwbcikLnBox6CGyO-boyAvu"
-        />
-      )}
+      {/* Booking Modal - Keep mounted for PayPal safety */}
+      <BookingModal
+        isOpen={isModalOpen && experience !== null}
+        onClose={() => setIsModalOpen(false)}
+        item={experience ? {
+          id: experience.Package_ID,
+          name: experience.Name,
+          priceEUR: experience.Price_EUR,
+        } : { id: "", name: "", priceEUR: "0" }}
+        config={{
+          maxNights: 5,
+          maxUnits: 3,
+          unitLabel: "room",
+          selectCheckout: false,
+          propertyName: "The Kasbah",
+          paypalContainerId: "paypal-kasbah",
+        }}
+        formatPrice={formatPrice}
+        paypalClientId="AWVf28iPmlVmaEyibiwkOtdXAl5UPqL9i8ee9yStaG6qb7hCwNRB2G95SYwbcikLnBox6CGyO-boyAvu"
+      />
     </div>
   );
 }

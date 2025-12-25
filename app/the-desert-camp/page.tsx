@@ -261,31 +261,29 @@ export default function TheDesertCampPage() {
       {/* Beyond the Walls Navigation */}
       <BeyondTheWallsNav />
 
-      {/* Booking Modal */}
-      {selectedTent && (
-        <BookingModal
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedTent(null);
-          }}
-          item={{
-            id: selectedTent.Tent_ID,
-            name: selectedTent.Name,
-            priceEUR: selectedTent.Price_EUR,
-          }}
-          config={{
-            maxNights: 3,
-            maxUnits: 4,
-            unitLabel: "tent",
-            selectCheckout: false,
-            propertyName: "The Desert Camp",
-            paypalContainerId: `paypal-tent-${selectedTent.Tent_ID}`,
-          }}
-          formatPrice={formatPrice}
-          paypalClientId="AWVf28iPmlVmaEyibiwkOtdXAl5UPqL9i8ee9yStaG6qb7hCwNRB2G95SYwbcikLnBox6CGyO-boyAvu"
-        />
-      )}
+      {/* Booking Modal - Keep mounted, use isOpen for visibility */}
+      <BookingModal
+        isOpen={isModalOpen && selectedTent !== null}
+        onClose={() => {
+          setIsModalOpen(false);
+          setTimeout(() => setSelectedTent(null), 300);
+        }}
+        item={selectedTent ? {
+          id: selectedTent.Tent_ID,
+          name: selectedTent.Name,
+          priceEUR: selectedTent.Price_EUR,
+        } : { id: "", name: "", priceEUR: "0" }}
+        config={{
+          maxNights: 3,
+          maxUnits: 4,
+          unitLabel: "tent",
+          selectCheckout: false,
+          propertyName: "The Desert Camp",
+          paypalContainerId: `paypal-tent-${selectedTent?.Tent_ID || "default"}`,
+        }}
+        formatPrice={formatPrice}
+        paypalClientId="AWVf28iPmlVmaEyibiwkOtdXAl5UPqL9i8ee9yStaG6qb7hCwNRB2G95SYwbcikLnBox6CGyO-boyAvu"
+      />
     </div>
   );
 }
