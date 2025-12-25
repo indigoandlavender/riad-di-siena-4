@@ -1,0 +1,131 @@
+"use client";
+
+import Link from "next/link";
+import { useState, useEffect } from "react";
+
+interface Section {
+  Title: string;
+  Subtitle: string;
+  Body: string;
+  Image_URL: string;
+}
+
+export default function TheRiadPage() {
+  const [content, setContent] = useState<Record<string, Section>>({});
+
+  useEffect(() => {
+    fetch("/api/the-riad")
+      .then((res) => res.json())
+      .then(setContent)
+      .catch(console.error);
+  }, []);
+
+  const hero = content.hero;
+  const history = content.history;
+  const authentic = content.authentic;
+  const original = content.original;
+  const courtyard = content.courtyard;
+  const location = content.location;
+  const heroImage = hero?.Image_URL || "";
+
+  return (
+    <div className="min-h-screen pt-24">
+      {/* Hero Image */}
+      <section className="relative h-[60vh] flex items-center justify-center">
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: heroImage ? `url('${heroImage}')` : undefined }}
+        />
+        <div className="absolute inset-0 bg-foreground/40" />
+        <div className="relative z-10 text-center text-sand px-6 max-w-3xl">
+          <p className="text-xs tracking-[0.4em] mb-6">MARRAKECH MEDINA</p>
+          <h1 className="font-serif text-4xl md:text-5xl mb-6">The House</h1>
+          {hero?.Title && (
+            <p className="text-lg font-light leading-relaxed max-w-xl mx-auto">{hero.Title}</p>
+          )}
+        </div>
+      </section>
+
+      {/* Flowing Prose */}
+      <section className="py-16 md:py-24 bg-sand">
+        <article className="max-w-xl mx-auto px-6 text-foreground/80 leading-relaxed">
+          
+          {hero?.Subtitle && (
+            <p className="mb-6">{hero.Subtitle}</p>
+          )}
+
+          {/* History Section */}
+          {history && (history.Title || history.Subtitle) && (
+            <>
+              <h2 className="font-display text-2xl md:text-3xl italic text-foreground/90 mt-12 mb-8">
+                {history.Title}
+              </h2>
+              {history.Subtitle && <p className="mb-6">{history.Subtitle}</p>}
+              {history.Body && <p className="mb-6">{history.Body}</p>}
+            </>
+          )}
+
+          {/* Authentic Section */}
+          {authentic && (authentic.Title || authentic.Subtitle) && (
+            <>
+              <h2 className="font-display text-2xl md:text-3xl italic text-foreground/90 mt-12 mb-8">
+                {authentic.Title}
+              </h2>
+              {authentic.Subtitle && <p className="mb-6">{authentic.Subtitle}</p>}
+              {authentic.Body && <p className="mb-6">{authentic.Body}</p>}
+            </>
+          )}
+
+          {/* Original Section */}
+          {original && (original.Title || original.Subtitle) && (
+            <>
+              <h2 className="font-display text-2xl md:text-3xl italic text-foreground/90 mt-12 mb-8">
+                {original.Title}
+              </h2>
+              {original.Subtitle && <p className="mb-6">{original.Subtitle}</p>}
+              {original.Body && <p className="mb-6">{original.Body}</p>}
+            </>
+          )}
+
+          {/* Courtyard Section */}
+          {courtyard && (courtyard.Title || courtyard.Subtitle) && (
+            <>
+              <h2 className="font-display text-2xl md:text-3xl italic text-foreground/90 mt-12 mb-8">
+                {courtyard.Title}
+              </h2>
+              {courtyard.Subtitle && <p className="mb-6">{courtyard.Subtitle}</p>}
+              {courtyard.Body && <p className="mb-6">{courtyard.Body}</p>}
+            </>
+          )}
+
+          {/* Location Section */}
+          {location && (location.Title || location.Subtitle) && (
+            <>
+              <h2 className="font-display text-2xl md:text-3xl italic text-foreground/90 mt-12 mb-8">
+                {location.Title}
+              </h2>
+              {location.Subtitle && <p className="mb-6">{location.Subtitle}</p>}
+              {location.Body && <p className="mb-6">{location.Body}</p>}
+            </>
+          )}
+
+          {/* Simple line divider */}
+          <div className="flex justify-center my-12">
+            <div className="w-12 h-px bg-foreground/30"></div>
+          </div>
+
+          {/* Soft CTA */}
+          <div className="text-center">
+            <Link
+              href="/rooms"
+              className="text-xs tracking-widest text-foreground/60 hover:text-foreground transition-colors"
+            >
+              View the rooms →
+            </Link>
+          </div>
+
+        </article>
+      </section>
+    </div>
+  );
+}
