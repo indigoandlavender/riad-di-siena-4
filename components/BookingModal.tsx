@@ -22,6 +22,9 @@ export interface BookingItem {
 
 export interface BookingConfig {
   maxGuests?: number;
+  maxNights?: number;
+  maxUnits?: number;
+  unitLabel?: string;
   hasCityTax?: boolean;
   cityTaxPerNight?: number;
   selectCheckout?: boolean;
