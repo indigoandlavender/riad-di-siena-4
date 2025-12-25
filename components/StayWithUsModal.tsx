@@ -99,6 +99,7 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
       priceEUR: kasbahExperience.Price_EUR,
     });
     setBookingConfig({
+      maxGuests: 3,
       maxNights: 5,
       maxUnits: 3,
       unitLabel: "room",
@@ -116,6 +117,7 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
       priceEUR: tent.Price_EUR,
     });
     setBookingConfig({
+      maxGuests: 4,
       maxNights: 3,
       maxUnits: 4,
       unitLabel: "tent",

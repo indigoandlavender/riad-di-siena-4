@@ -874,7 +874,7 @@ function BookingModalContent({
 
               {/* Contact link */}
               <p className="text-center mt-6 text-[11px] text-foreground/30">
-                <a href="/contact" className="hover:text-foreground/50 transition-colors">Send us a note</a>
+                <a href="/contact" target="_blank" rel="noopener noreferrer" className="hover:text-foreground/50 transition-colors">Send us a note</a>
               </p>
             </div>
           )}
