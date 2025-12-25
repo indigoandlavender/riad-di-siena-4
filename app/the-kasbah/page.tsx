@@ -150,6 +150,15 @@ export default function TheKasbahPage() {
                 >
                   BOOK THE KASBAH EXPERIENCE
                 </button>
+                <p className="text-foreground/50 text-xs mt-6">
+                  Also part of{" "}
+                  <a 
+                    href="/#the-journey" 
+                    className="underline hover:text-foreground transition-colors"
+                  >
+                    The Slow Journey South
+                  </a>
+                </p>
               </div>
             </div>
           ) : (

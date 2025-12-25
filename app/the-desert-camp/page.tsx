@@ -251,7 +251,13 @@ export default function TheDesertCampPage() {
           )}
 
           <p className="text-center text-foreground/50 text-xs mt-8">
-            Transfers from Marrakech available on request.
+            Also part of{" "}
+            <a 
+              href="/#the-journey" 
+              className="underline hover:text-foreground transition-colors"
+            >
+              The Slow Journey South
+            </a>
           </p>
         </div>
       </section>
