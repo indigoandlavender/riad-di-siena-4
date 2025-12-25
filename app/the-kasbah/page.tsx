@@ -22,7 +22,8 @@ interface Experience {
   Name: string;
   Description: string;
   Price_EUR: string;
-  Single_Supplement_EUR: string;
+  Extra_Person_EUR: string;
+  Single_Supplement_EUR?: string;
   Duration: string;
   Min_Guests: string;
   includes: string[];
@@ -128,10 +129,12 @@ export default function TheKasbahPage() {
                       <p className="text-foreground/60 text-xs tracking-widest mb-2">PER NIGHT (DOUBLE OCCUPANCY)</p>
                       <p className="font-serif text-3xl">{formatPrice(parseFloat(experience.Price_EUR))}</p>
                     </div>
-                    <div>
-                      <p className="text-foreground/60 text-xs tracking-widest mb-2">SINGLE SUPPLEMENT</p>
-                      <p className="font-serif text-xl">{formatPrice(parseFloat(experience.Single_Supplement_EUR))}</p>
-                    </div>
+                    {experience.Single_Supplement_EUR && (
+                      <div>
+                        <p className="text-foreground/60 text-xs tracking-widest mb-2">SINGLE SUPPLEMENT</p>
+                        <p className="font-serif text-xl">{formatPrice(parseFloat(experience.Single_Supplement_EUR))}</p>
+                      </div>
+                    )}
                     <p className="text-foreground/50 text-xs">
                       Price includes all transfers, accommodation, meals, and activities. 
                       Minimum {experience.Min_Guests} guests. Private kasbah buyout available on request.
@@ -175,7 +178,7 @@ export default function TheKasbahPage() {
         config={{
           maxGuestsPerUnit: 3,
           baseGuestsPerUnit: 2,
-          extraPersonFee: 60,
+          extraPersonFee: parseFloat(experience?.Extra_Person_EUR || "0"),
           maxNights: 5,
           maxUnits: 3,
           unitLabel: "room",

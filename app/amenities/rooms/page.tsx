@@ -84,6 +84,7 @@ export default function RoomsPage() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [cityTaxPerNight, setCityTaxPerNight] = useState(2.5);
   const { formatPrice } = useCurrency();
 
   useEffect(() => {
@@ -91,11 +92,15 @@ export default function RoomsPage() {
       fetch("/api/rooms").then((res) => res.json()),
       fetch("/api/rooms-hero").then((res) => res.json()),
       fetch("/api/rooms-gallery").then((res) => res.json()),
+      fetch("/api/settings").then((res) => res.json()),
     ])
-      .then(([roomsData, heroData, galleryData]) => {
+      .then(([roomsData, heroData, galleryData, settingsData]) => {
         setRooms(roomsData);
         setHero(heroData);
         setGallery(galleryData);
+        if (settingsData.city_tax_eur) {
+          setCityTaxPerNight(parseFloat(settingsData.city_tax_eur));
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -259,6 +264,7 @@ export default function RoomsPage() {
           maxGuestsPerUnit: 2,
           baseGuestsPerUnit: 2,
           hasCityTax: true,
+          cityTaxPerNight,
           selectCheckout: true,
           paypalContainerId: `paypal-amenity-${selectedRoom?.Room_ID || "default"}`,
         }}

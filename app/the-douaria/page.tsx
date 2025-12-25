@@ -122,6 +122,7 @@ export default function TheDouariaPage() {
   const [loading, setLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cityTaxPerNight, setCityTaxPerNight] = useState(2.5);
 
   const openBookingModal = (room: Room) => {
     setSelectedRoom(room);
@@ -134,12 +135,16 @@ export default function TheDouariaPage() {
       fetch("/api/douaria-content").then((res) => res.json()),
       fetch("/api/douaria-rooms").then((res) => res.json()),
       fetch("/api/douaria-gallery").then((res) => res.json()),
+      fetch("/api/settings").then((res) => res.json()),
     ])
-      .then(([heroData, contentData, roomsData, galleryData]) => {
+      .then(([heroData, contentData, roomsData, galleryData, settingsData]) => {
         setHero(heroData);
         setParagraphs(contentData);
         setRooms(roomsData);
         setGallery(galleryData);
+        if (settingsData.city_tax_eur) {
+          setCityTaxPerNight(parseFloat(settingsData.city_tax_eur));
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -269,6 +274,7 @@ export default function TheDouariaPage() {
           maxGuestsPerUnit: 2,
           baseGuestsPerUnit: 2,
           hasCityTax: true,
+          cityTaxPerNight,
           selectCheckout: true,
           paypalContainerId: `paypal-douaria-${selectedRoom?.Room_ID || "default"}`,
         }}

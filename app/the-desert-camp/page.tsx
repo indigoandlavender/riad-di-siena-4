@@ -23,6 +23,7 @@ interface Tent {
   Name: string;
   Description: string;
   Price_EUR: string;
+  Extra_Person_EUR: string;
   features: string[];
 }
 
@@ -276,7 +277,7 @@ export default function TheDesertCampPage() {
         config={{
           maxGuestsPerUnit: 4,
           baseGuestsPerUnit: 2,
-          extraPersonFee: selectedTent?.Level?.toLowerCase().includes("boutique") ? 150 : 100,
+          extraPersonFee: parseFloat(selectedTent?.Extra_Person_EUR || "0"),
           maxNights: 3,
           maxUnits: 4,
           unitLabel: "tent",

@@ -8,7 +8,8 @@ interface Experience {
   Name: string;
   Description: string;
   Price_EUR: string;
-  Single_Supplement_EUR: string;
+  Extra_Person_EUR: string;
+  Single_Supplement_EUR?: string;
   Duration: string;
   Includes: string;
   Min_Guests: string;

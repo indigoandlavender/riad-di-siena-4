@@ -9,6 +9,7 @@ interface Tent {
   Name: string;
   Description: string;
   Price_EUR: string;
+  Extra_Person_EUR: string;
   Features: string;
   Order: string;
 }
