@@ -83,7 +83,8 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
       iCalURL: room.iCal_URL,
     });
     setBookingConfig({
-      maxGuests: 2,
+      maxGuestsPerUnit: 2,
+      baseGuestsPerUnit: 2,
       hasCityTax: true,
       selectCheckout: true,
       paypalContainerId: `paypal-room-${room.Room_ID}`,
@@ -99,7 +100,9 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
       priceEUR: kasbahExperience.Price_EUR,
     });
     setBookingConfig({
-      maxGuests: 3,
+      maxGuestsPerUnit: 3,
+      baseGuestsPerUnit: 2,
+      extraPersonFee: 60,
       maxNights: 5,
       maxUnits: 3,
       unitLabel: "room",
@@ -117,7 +120,9 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
       priceEUR: tent.Price_EUR,
     });
     setBookingConfig({
-      maxGuests: 4,
+      maxGuestsPerUnit: 4,
+      baseGuestsPerUnit: 2,
+      extraPersonFee: tent.Level?.toLowerCase().includes("boutique") ? 150 : 100,
       maxNights: 3,
       maxUnits: 4,
       unitLabel: "tent",

@@ -21,12 +21,14 @@ export interface BookingItem {
 }
 
 export interface BookingConfig {
-  maxGuests?: number;
+  maxGuestsPerUnit?: number;
+  baseGuestsPerUnit?: number;
   maxNights?: number;
   maxUnits?: number;
   unitLabel?: string;
   hasCityTax?: boolean;
   cityTaxPerNight?: number;
+  extraPersonFee?: number;
   selectCheckout?: boolean;
   propertyName?: string;
   paypalContainerId?: string;
@@ -437,12 +439,14 @@ function BookingModalContent({
   onBookingComplete,
 }: Omit<BookingModalProps, "isOpen">) {
   const {
-    maxGuests = 2,
+    maxGuestsPerUnit = 2,
+    baseGuestsPerUnit = 2,
     maxNights = 30,
     maxUnits = 1,
     unitLabel = "room",
     hasCityTax = false,
     cityTaxPerNight = 2.5,
+    extraPersonFee = 0,
     selectCheckout = true,
   } = config;
 
@@ -450,7 +454,7 @@ function BookingModalContent({
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [nights, setNights] = useState(1);
-  const [guests, setGuests] = useState(2);
+  const [guests, setGuests] = useState(baseGuestsPerUnit);
   const [units, setUnits] = useState(1);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -459,6 +463,10 @@ function BookingModalContent({
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookedDates, setBookedDates] = useState<string[]>([]);
+
+  // Calculate max guests based on units selected
+  const maxGuests = maxGuestsPerUnit * units;
+  const baseGuests = baseGuestsPerUnit * units;
 
   // Fetch booked dates from iCal
   useEffect(() => {
@@ -506,10 +514,13 @@ function BookingModalContent({
     ? Math.max(1, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)))
     : nights;
 
+  // Pricing calculations
   const pricePerNight = parseFloat(item.priceEUR) || 0;
   const subtotal = pricePerNight * calculatedNights * units;
+  const extraGuests = Math.max(0, guests - baseGuests);
+  const extraGuestsCost = extraGuests * extraPersonFee * calculatedNights;
   const cityTax = hasCityTax ? cityTaxPerNight * guests * calculatedNights : 0;
-  const total = subtotal + cityTax;
+  const total = subtotal + extraGuestsCost + cityTax;
 
   const canProceedStep1 = selectCheckout
     ? checkIn && checkOut && calculatedNights >= 1
@@ -572,14 +583,21 @@ function BookingModalContent({
     setCheckIn("");
     setCheckOut("");
     setNights(1);
-    setGuests(2);
+    setGuests(baseGuestsPerUnit);
     setUnits(1);
     setFirstName("");
     setLastName("");
     setEmail("");
     setPhone("");
     setMessage("");
-  }, [item.id]);
+  }, [item.id, baseGuestsPerUnit]);
+
+  // Cap guests when units decrease
+  useEffect(() => {
+    if (guests > maxGuests) {
+      setGuests(maxGuests);
+    }
+  }, [units, maxGuests, guests]);
 
   // Format date for display
   const formatDate = (dateStr: string) => {
@@ -705,6 +723,14 @@ function BookingModalContent({
                     </span>
                     <span className="text-foreground/70">{formatPrice(subtotal)}</span>
                   </div>
+                  {extraGuests > 0 && extraPersonFee > 0 && (
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-foreground/50">
+                        Extra guest{extraGuests > 1 ? "s" : ""} ({extraGuests} × €{extraPersonFee})
+                      </span>
+                      <span className="text-foreground/70">€{extraGuestsCost.toFixed(2)}</span>
+                    </div>
+                  )}
                   {hasCityTax && (
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-foreground/50">City tax</span>
@@ -832,11 +858,18 @@ function BookingModalContent({
                 <div className="space-y-2 pt-4 border-t border-foreground/10">
                   <div className="flex justify-between text-sm">
                     <span className="text-foreground/50">
-                      {calculatedNights} night{calculatedNights > 1 ? "s" : ""} × {guests} guest{guests > 1 ? "s" : ""}
-                      {units > 1 && ` × ${units} ${unitLabel}s`}
+                      {units > 1 ? `${units} ${unitLabel}s × ` : ""}{calculatedNights} night{calculatedNights > 1 ? "s" : ""}
                     </span>
                     <span className="text-foreground/70">{formatPrice(subtotal)}</span>
                   </div>
+                  {extraGuests > 0 && extraPersonFee > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-foreground/50">
+                        {extraGuests} extra guest{extraGuests > 1 ? "s" : ""} × {calculatedNights} night{calculatedNights > 1 ? "s" : ""}
+                      </span>
+                      <span className="text-foreground/70">€{extraGuestsCost.toFixed(2)}</span>
+                    </div>
+                  )}
                   {hasCityTax && cityTax > 0 && (
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground/50">City tax</span>
