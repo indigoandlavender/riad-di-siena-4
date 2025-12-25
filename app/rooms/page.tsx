@@ -246,29 +246,29 @@ export default function RoomsPage() {
       <ElfsightScript />
       */}
 
-      {selectedRoom && (
-        <BookingModal
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedRoom(null);
-          }}
-          item={{
-            id: selectedRoom.Room_ID,
-            name: selectedRoom.Name,
-            priceEUR: selectedRoom.Price_EUR,
-            iCalURL: selectedRoom.iCal_URL,
-          }}
-          config={{
-            maxGuests: 2,
-            hasCityTax: true,
-            selectCheckout: true,
-            paypalContainerId: `paypal-room-${selectedRoom.Room_ID}`,
-          }}
-          formatPrice={formatPrice}
-          paypalClientId="AWVf28iPmlVmaEyibiwkOtdXAl5UPqL9i8ee9yStaG6qb7hCwNRB2G95SYwbcikLnBox6CGyO-boyAvu"
-        />
-      )}
+      {/* Keep modal always mounted - let isOpen control visibility */}
+      <BookingModal
+        isOpen={isModalOpen && selectedRoom !== null}
+        onClose={() => {
+          setIsModalOpen(false);
+          // Clear selectedRoom after a delay to let modal close gracefully
+          setTimeout(() => setSelectedRoom(null), 300);
+        }}
+        item={selectedRoom ? {
+          id: selectedRoom.Room_ID,
+          name: selectedRoom.Name,
+          priceEUR: selectedRoom.Price_EUR,
+          iCalURL: selectedRoom.iCal_URL,
+        } : { id: "", name: "", priceEUR: "0" }}
+        config={{
+          maxGuests: 2,
+          hasCityTax: true,
+          selectCheckout: true,
+          paypalContainerId: `paypal-room-${selectedRoom?.Room_ID || "default"}`,
+        }}
+        formatPrice={formatPrice}
+        paypalClientId="AWVf28iPmlVmaEyibiwkOtdXAl5UPqL9i8ee9yStaG6qb7hCwNRB2G95SYwbcikLnBox6CGyO-boyAvu"
+      />
     </div>
   );
 }
