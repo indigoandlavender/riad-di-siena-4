@@ -450,7 +450,7 @@ function BookingModalContent({
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [nights, setNights] = useState(1);
-  const [guests, setGuests] = useState(1);
+  const [guests, setGuests] = useState(2);
   const [units, setUnits] = useState(1);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -572,7 +572,7 @@ function BookingModalContent({
     setCheckIn("");
     setCheckOut("");
     setNights(1);
-    setGuests(1);
+    setGuests(2);
     setUnits(1);
     setFirstName("");
     setLastName("");
@@ -871,6 +871,11 @@ function BookingModalContent({
                 </svg>
                 Back
               </button>
+
+              {/* Contact link */}
+              <p className="text-center mt-6 text-[11px] text-foreground/30">
+                <a href="/contact" className="hover:text-foreground/50 transition-colors">Send us a note</a>
+              </p>
             </div>
           )}
 

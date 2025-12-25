@@ -6,7 +6,7 @@ export default function StructuredData() {
     description: "A 300-year-old house in the heart of Marrakech medina. Not a hotel — a house with soul.",
     url: "https://riaddisiena.com",
     telephone: "+212618070450",
-    email: "hello@riaddisiena.com",
+    email: "happy@riaddisiena.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "35 Derb Fhal Zfriti Kennaria",
