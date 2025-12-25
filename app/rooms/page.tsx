@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import BookingModal from "@/components/BookingModal";
-import GalleryCarousel from "@/components/GalleryCarousel";
+// import GalleryCarousel from "@/components/GalleryCarousel";
 import { useCurrency } from "@/components/CurrencyContext";
-import ElfsightWidget, { ElfsightScript } from "@/components/ElfsightWidget";
+// import ElfsightWidget, { ElfsightScript } from "@/components/ElfsightWidget";
 
 interface Room {
   Room_ID: string;
@@ -216,11 +216,13 @@ export default function RoomsPage() {
         </div>
       </section>
 
-      {/* Gallery Carousel */}
+      {/* Gallery Carousel - temporarily disabled
       {gallery.length > 0 && (
         <GalleryCarousel images={gallery} />
       )}
+      */}
 
+      {/* Reviews section - temporarily disabled
       <section className="py-24 bg-cream">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -242,6 +244,7 @@ export default function RoomsPage() {
       </section>
 
       <ElfsightScript />
+      */}
 
       {selectedRoom && (
         <BookingModal
