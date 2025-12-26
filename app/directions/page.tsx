@@ -142,7 +142,6 @@ function DirectionsContent() {
           </div>
           ${stepsHTML}
           <div class="footer">
-            <p>Lost? WhatsApp us and we'll guide you home.</p>
             <p>riaddisiena.com</p>
           </div>
         </body>
@@ -253,13 +252,6 @@ function DirectionsContent() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Emergency Contact */}
-        <div className="mt-16 pt-8 border-t border-foreground/10 text-center">
-          <p className="text-foreground/50 text-sm">
-            {getText("lost_text", "Lost? Call or WhatsApp us and we'll guide you.")}
-          </p>
         </div>
       </div>
     </div>
