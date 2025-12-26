@@ -35,22 +35,17 @@ const LANGUAGE_LABELS: Record<Language, string> = {
 
 function DirectionsContent() {
   const searchParams = useSearchParams();
-  const initialBuilding = searchParams.get("building") === "annex" ? "annex" : "main";
   
   const [directions, setDirections] = useState<{ main: Direction[]; annex: Direction[] }>({ main: [], annex: [] });
   const [settings, setSettings] = useState<Record<string, DirectionsSetting>>({});
-  const [building, setBuilding] = useState<"main" | "annex">(initialBuilding);
+  const [building, setBuilding] = useState<"main" | "annex">("main");
   const [language, setLanguage] = useState<Language>("en");
 
-  // Check for hash on mount and handle #no35 for Douaria
+  // Sync building state with URL params on every change
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash === "#no35") {
-      setBuilding("annex");
-    } else if (hash === "#no37") {
-      setBuilding("main");
-    }
-  }, []);
+    const buildingParam = searchParams.get("building");
+    setBuilding(buildingParam === "annex" ? "annex" : "main");
+  }, [searchParams]);
 
   useEffect(() => {
     fetch("/api/directions")
