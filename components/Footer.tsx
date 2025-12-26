@@ -287,8 +287,8 @@ export default function Footer() {
             </p>
             {/* Hidden directions links - Circle 1: No. 37 (Main Riad), Circle 2: No. 35 (Douaria) */}
             <div className="flex items-center gap-2">
-              <Link href="/directions#no37" className="w-2 h-2 rounded-full bg-sand/30 hover:bg-sand/50 transition-colors" aria-label="Directions to No. 37" />
-              <Link href="/directions#no35" className="w-2 h-2 rounded-full bg-sand/30 hover:bg-sand/50 transition-colors" aria-label="Directions to No. 35" />
+              <Link href="/directions" className="w-2 h-2 rounded-full bg-sand/30 hover:bg-sand/50 transition-colors" aria-label="Directions to No. 37" />
+              <Link href="/directions?building=annex" className="w-2 h-2 rounded-full bg-sand/30 hover:bg-sand/50 transition-colors" aria-label="Directions to No. 35" />
             </div>
           </div>
         </div>
