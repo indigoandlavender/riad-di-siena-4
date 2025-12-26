@@ -42,6 +42,16 @@ function DirectionsContent() {
   const [building, setBuilding] = useState<"main" | "annex">(initialBuilding);
   const [language, setLanguage] = useState<Language>("en");
 
+  // Check for hash on mount and handle #no35 for Douaria
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash === "#no35") {
+      setBuilding("annex");
+    } else if (hash === "#no37") {
+      setBuilding("main");
+    }
+  }, []);
+
   useEffect(() => {
     fetch("/api/directions")
       .then((res) => res.json())
