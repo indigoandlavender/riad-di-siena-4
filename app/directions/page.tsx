@@ -114,13 +114,18 @@ function DirectionsContent() {
       </div>
     `).join('');
 
-    const title = building === "main" ? "Riad di Siena (No. 37)" : "The Douaria (No. 35)";
+    const title = building === "main" 
+      ? getText("main_subtitle", "To Riad di Siena (No. 37)") 
+      : getText("annex_subtitle", "To The Douaria (No. 35)");
+    
+    const noteTitle = getText("note_title", "A gentle note:");
+    const noteText = getText("note_text", "Google Maps will lead you to No. 43, which is a different riad. Trust these directions instead—they were written by someone who has walked this path many times.");
     
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Walking Directions - ${title}</title>
+          <title>${getText("page_title", "Walking Directions")} - ${title}</title>
           <style>
             body { font-family: Georgia, serif; max-width: 600px; margin: 40px auto; padding: 20px; color: #1a1a1a; }
             h1 { font-size: 24px; font-weight: normal; margin-bottom: 8px; }
@@ -130,10 +135,10 @@ function DirectionsContent() {
           </style>
         </head>
         <body>
-          <h1>Walking Directions</h1>
-          <p class="subtitle">To ${title}</p>
+          <h1>${getText("page_title", "Walking Directions")}</h1>
+          <p class="subtitle">${title}</p>
           <div class="note">
-            <strong>A gentle note:</strong> Google Maps will lead you to No. 43, which is a different riad. Trust these directions instead—they were written by someone who has walked this path many times.
+            <strong>${noteTitle}</strong> ${noteText}
           </div>
           ${stepsHTML}
           <div class="footer">
@@ -165,9 +170,8 @@ function DirectionsContent() {
         {/* Google Maps Warning Note */}
         <div className="bg-cream border border-foreground/10 p-6 mb-10 text-center">
           <p className="text-foreground/70 text-sm leading-relaxed">
-            <span className="font-medium text-foreground/80">A gentle note:</span> Google Maps will lead you to No. 43, which is a different riad. 
-            Trust these directions instead—they were written by someone who has walked this path many times. 
-            If you need help along the way, just send us a message and we'll guide you home.
+            <span className="font-medium text-foreground/80">{getText("note_title", "A gentle note:")}</span>{" "}
+            {getText("note_text", "Google Maps will lead you to No. 43, which is a different riad. Trust these directions instead—they were written by someone who has walked this path many times. If you need help along the way, just send us a message and we'll guide you home.")}
           </p>
         </div>
 
