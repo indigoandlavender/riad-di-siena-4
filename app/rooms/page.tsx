@@ -64,9 +64,50 @@ const AcIcon = () => (
   </svg>
 );
 
+const SizeIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
+    <rect x="2" y="2" width="16" height="16" />
+    <path d="M2 10h16" />
+    <path d="M10 2v16" />
+  </svg>
+);
+
+const ViewIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
+    <circle cx="10" cy="10" r="3" />
+    <path d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5z" />
+  </svg>
+);
+
+const BreakfastIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
+    <ellipse cx="10" cy="14" rx="7" ry="3" />
+    <path d="M3 14v1a7 3 0 0014 0v-1" />
+    <path d="M7 8v3M10 6v5M13 8v3" />
+  </svg>
+);
+
+const LinensIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
+    <path d="M3 4h14v12a2 2 0 01-2 2H5a2 2 0 01-2-2V4z" />
+    <path d="M3 4c0-1 1-2 3-2h8c2 0 3 1 3 2" />
+    <path d="M7 8h6M7 12h6" />
+  </svg>
+);
+
+const AmenitiesIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
+    <path d="M10 2v4M10 14v4" />
+    <path d="M6 10a4 4 0 018 0" />
+    <circle cx="10" cy="10" r="2" />
+  </svg>
+);
+
 const iconMap: Record<string, () => JSX.Element> = {
   "bathroom": BathIcon,
   "ensuite": BathIcon,
+  "en-suite": BathIcon,
+  "private": BathIcon,
   "wi-fi": WifiIcon,
   "wifi": WifiIcon,
   "air": AcIcon,
@@ -75,6 +116,16 @@ const iconMap: Record<string, () => JSX.Element> = {
   "queen": BedIcon,
   "king": BedIcon,
   "double": BedIcon,
+  "m²": SizeIcon,
+  "sqm": SizeIcon,
+  "view": ViewIcon,
+  "courtyard": ViewIcon,
+  "breakfast": BreakfastIcon,
+  "linens": LinensIcon,
+  "towels": LinensIcon,
+  "shower": AmenitiesIcon,
+  "shampoo": AmenitiesIcon,
+  "toiletries": AmenitiesIcon,
 };
 
 export default function RoomsPage() {
