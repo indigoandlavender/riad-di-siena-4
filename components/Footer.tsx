@@ -1,20 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useCurrency, Currency } from "./CurrencyContext";
-import { useState, useRef, useEffect, useMemo } from "react";
-
-// All satellite properties
-const ALL_SATELLITES = [
-  { href: "/the-douaria", label: "The Douaria" },
-  { href: "/the-kasbah", label: "The Kasbah" },
-  { href: "/the-desert-camp", label: "The Desert Camp" },
-  { href: "/the-farm", label: "The Farm" },
-];
-
-// The main property to swap in when on a satellite page
-const MAIN_PROPERTY = { href: "/the-riad", label: "The Riad" };
+import { useState, useRef, useEffect } from "react";
 
 // Fallback data if Nexus unavailable
 const FALLBACK_LANGUAGES = [
@@ -45,7 +33,6 @@ interface NexusCurrency {
 }
 
 export default function Footer() {
-  const pathname = usePathname();
   const { currency, setCurrency } = useCurrency();
   const [language, setLanguage] = useState("EN");
   const [langOpen, setLangOpen] = useState(false);
@@ -74,24 +61,6 @@ export default function Footer() {
       .catch((err) => console.error("Failed to fetch Nexus footer data:", err));
   }, []);
 
-  // Determine which links to show in "Beyond the Walls"
-  const beyondTheWallsLinks = useMemo(() => {
-    // Check if current page is one of the satellites
-    const currentSatelliteIndex = ALL_SATELLITES.findIndex(
-      (s) => pathname === s.href || pathname?.startsWith(s.href + "/")
-    );
-
-    if (currentSatelliteIndex === -1) {
-      // We're on main riad pages - show all satellites
-      return ALL_SATELLITES;
-    }
-
-    // We're on a satellite page - replace current satellite with main riad
-    const links = [...ALL_SATELLITES];
-    links[currentSatelliteIndex] = MAIN_PROPERTY;
-    return links;
-  }, [pathname]);
-
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -114,7 +83,7 @@ export default function Footer() {
       {/* Level 2: Brand Content - darkest */}
       <div className="bg-[#1a1a1a] text-sand">
         <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {/* Logo & Tagline */}
             <div>
               <div className="flex flex-col items-start leading-tight mb-4">
@@ -156,6 +125,9 @@ export default function Footer() {
               <ul className="space-y-3">
                 <li><Link href="/the-riad" className="text-sand/70 text-sm hover:text-sand transition-colors">The House</Link></li>
                 <li><Link href="/rooms" className="text-sand/70 text-sm hover:text-sand transition-colors">Rooms</Link></li>
+                <li><Link href="/amenities" className="text-sand/70 text-sm hover:text-sand transition-colors">Amenities</Link></li>
+                <li><Link href="/philosophy" className="text-sand/70 text-sm hover:text-sand transition-colors">Philosophy</Link></li>
+                <li><Link href="/faq" className="text-sand/70 text-sm hover:text-sand transition-colors">FAQ</Link></li>
                 <li><Link href="/contact" className="text-sand/70 text-sm hover:text-sand transition-colors">Contact Us</Link></li>
               </ul>
             </div>
@@ -164,25 +136,16 @@ export default function Footer() {
             <div>
               <span className="text-xs tracking-widest mb-6 block">EXPERIENCE</span>
               <ul className="space-y-3">
-                <li><Link href="/amenities" className="text-sand/70 text-sm hover:text-sand transition-colors">Amenities</Link></li>
-                <li><Link href="/philosophy" className="text-sand/70 text-sm hover:text-sand transition-colors">Philosophy</Link></li>
-                <li><Link href="/faq" className="text-sand/70 text-sm hover:text-sand transition-colors">FAQ</Link></li>
-              </ul>
-            </div>
-
-            {/* Beyond the Walls */}
-            <div>
-              <Link href="/beyond-the-walls" className="text-xs tracking-widest mb-6 block hover:text-sand/80 transition-colors">
-                BEYOND THE WALLS
-              </Link>
-              <ul className="space-y-3">
-                {beyondTheWallsLinks.map((link) => (
-                  <li key={link.href}>
-                    <Link href={link.href} className="text-sand/70 text-sm hover:text-sand transition-colors">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
+                <li>
+                  <a 
+                    href="https://slowmorocco.com/destination/marrakech" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sand/70 text-sm hover:text-sand transition-colors"
+                  >
+                    Marrakech
+                  </a>
+                </li>
                 <li>
                   <a 
                     href="https://slowmorocco.com/day-trips" 
@@ -190,7 +153,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     className="text-sand/70 text-sm hover:text-sand transition-colors"
                   >
-                    Day Adventures
+                    Day Trips
                   </a>
                 </li>
               </ul>
