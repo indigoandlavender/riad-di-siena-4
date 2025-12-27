@@ -122,7 +122,7 @@ export default function Footer() {
             {/* Stay */}
             <div>
               <span className="text-xs tracking-widest mb-6 block">STAY</span>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 <li><Link href="/the-riad" className="text-sand/70 text-sm hover:text-sand transition-colors">The House</Link></li>
                 <li><Link href="/rooms" className="text-sand/70 text-sm hover:text-sand transition-colors">Rooms</Link></li>
                 <li><Link href="/amenities" className="text-sand/70 text-sm hover:text-sand transition-colors">Amenities</Link></li>
@@ -135,7 +135,7 @@ export default function Footer() {
             {/* Experience */}
             <div>
               <span className="text-xs tracking-widest mb-6 block">EXPERIENCE</span>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 <li>
                   <a 
                     href="https://slowmorocco.com/destination/marrakech" 
@@ -164,7 +164,7 @@ export default function Footer() {
               <Link href="/beyond-the-walls" className="text-xs tracking-widest mb-6 block hover:text-sand/80 transition-colors">
                 BEYOND THE WALLS
               </Link>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 <li><Link href="/the-douaria" className="text-sand/70 text-sm hover:text-sand transition-colors">The Douaria</Link></li>
                 <li><Link href="/the-kasbah" className="text-sand/70 text-sm hover:text-sand transition-colors">The Kasbah</Link></li>
                 <li><Link href="/the-desert-camp" className="text-sand/70 text-sm hover:text-sand transition-colors">The Desert Camp</Link></li>
