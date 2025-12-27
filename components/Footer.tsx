@@ -83,7 +83,7 @@ export default function Footer() {
       {/* Level 2: Brand Content - darkest */}
       <div className="bg-[#1a1a1a] text-sand">
         <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             {/* Logo & Tagline */}
             <div>
               <div className="flex flex-col items-start leading-tight mb-4">
@@ -156,6 +156,19 @@ export default function Footer() {
                     Day Trips
                   </a>
                 </li>
+              </ul>
+            </div>
+
+            {/* Beyond the Walls */}
+            <div>
+              <Link href="/beyond-the-walls" className="text-xs tracking-widest mb-6 block hover:text-sand/80 transition-colors">
+                BEYOND THE WALLS
+              </Link>
+              <ul className="space-y-3">
+                <li><Link href="/the-douaria" className="text-sand/70 text-sm hover:text-sand transition-colors">The Douaria</Link></li>
+                <li><Link href="/the-kasbah" className="text-sand/70 text-sm hover:text-sand transition-colors">The Kasbah</Link></li>
+                <li><Link href="/the-desert-camp" className="text-sand/70 text-sm hover:text-sand transition-colors">The Desert Camp</Link></li>
+                <li><Link href="/the-farm" className="text-sand/70 text-sm hover:text-sand transition-colors">The Farm</Link></li>
               </ul>
             </div>
           </div>
