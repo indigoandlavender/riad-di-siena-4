@@ -147,9 +147,9 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
         
-        <div className="relative bg-[#f8f5f0] w-full max-w-xl max-h-[85vh] overflow-y-auto shadow-2xl">
+        <div className="relative bg-[#f8f5f0] w-full max-w-xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="sticky top-0 bg-[#f8f5f0] border-b border-foreground/10 px-10 py-6 flex items-center justify-between z-10">
+          <div className="bg-[#f8f5f0] border-b border-foreground/10 px-10 py-6 flex items-center justify-between">
             <h2 className="font-serif text-xl text-foreground/90">Stay With Us</h2>
             <button 
               onClick={onClose} 
@@ -162,7 +162,8 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
             </button>
           </div>
 
-          <div className="px-10 py-8">
+          {/* Content - scrollable but no visible scrollbar */}
+          <div className="px-10 py-8 max-h-[65vh] overflow-y-auto scrollbar-hide">
             {loading ? (
               <div className="flex justify-center py-16">
                 <div className="w-5 h-5 border border-foreground/20 border-t-foreground/60 rounded-full animate-spin" />
