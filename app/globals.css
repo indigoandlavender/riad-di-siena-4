@@ -155,6 +155,16 @@ a {
   background: hsl(var(--muted-foreground));
 }
 
+/* Hidden scrollbar utility - allows scroll without visible bar */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari, Opera */
+}
+
 /* ═══════════════════════════════════════════════════════════════
    FORM ELEMENTS
    ═══════════════════════════════════════════════════════════════ */
