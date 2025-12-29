@@ -226,7 +226,7 @@ function DirectionsContent() {
               <path d="M4 6V3a1 1 0 011-1h6a1 1 0 011 1v3" />
               <path d="M6 10h4" />
             </svg>
-            PRINT FOR OFFLINE
+            {getText("save_offline", "PRINT FOR OFFLINE")}
           </button>
         </div>
 
