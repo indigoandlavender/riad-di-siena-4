@@ -8,32 +8,32 @@ import './globals.css'
 export const metadata: Metadata = {
   metadataBase: new URL("https://riaddisiena.com"),
   title: {
-    default: "Riad di Siena | A House in Marrakech Medina",
+    default: "Riad di Siena | Boutique Guesthouse in Marrakech Medina",
     template: "%s | Riad di Siena",
   },
-  description: "A 300-year-old house in the heart of Marrakech medina. Not a hotel—a home with soul.",
-  keywords: ["riad", "marrakech", "medina", "guesthouse", "morocco", "boutique accommodation", "traditional house"],
+  description: "A 300-year-old sanctuary in the heart of Marrakech medina. Four rooms, a courtyard fountain, rooftop views of the Atlas. Not a hotel—a home with soul.",
+  keywords: ["riad marrakech", "marrakech medina guesthouse", "boutique riad morocco", "traditional moroccan house", "marrakech accommodation", "riad with courtyard"],
   authors: [{ name: "Riad di Siena" }],
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://riaddisiena.com",
     siteName: "Riad di Siena",
-    title: "Riad di Siena | A House in Marrakech Medina",
-    description: "A 300-year-old house in the heart of Marrakech medina. Not a hotel—a home with soul.",
+    title: "Riad di Siena | Boutique Guesthouse in Marrakech Medina",
+    description: "A 300-year-old sanctuary in the heart of Marrakech medina. Four rooms, a courtyard fountain, rooftop views of the Atlas. Not a hotel—a home with soul.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Riad di Siena - Traditional Moroccan Guesthouse",
+        alt: "Riad di Siena courtyard with traditional zellige fountain",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Riad di Siena | A House in Marrakech Medina",
-    description: "A 300-year-old house in the heart of Marrakech medina. Not a hotel—a home with soul.",
+    title: "Riad di Siena | Boutique Guesthouse in Marrakech Medina",
+    description: "A 300-year-old sanctuary in the heart of Marrakech medina. Four rooms, a courtyard fountain, rooftop views of the Atlas.",
     images: ["/og-image.jpg"],
   },
   icons: {
@@ -43,7 +43,75 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://riaddisiena.com",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 }
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "LodgingBusiness",
+  "@id": "https://riaddisiena.com/#lodgingbusiness",
+  "name": "Riad di Siena",
+  "description": "A 300-year-old traditional Moroccan guesthouse in the heart of Marrakech medina. Four uniquely designed rooms around a courtyard with zellige fountain, rooftop terrace with Atlas Mountain views.",
+  "url": "https://riaddisiena.com",
+  "telephone": "+212-524-391723",
+  "email": "happy@riaddisiena.com",
+  "image": [
+    "https://riaddisiena.com/og-image.jpg"
+  ],
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "37 Derb Fhal Zfriti, Kennaria",
+    "addressLocality": "Marrakech",
+    "addressRegion": "Marrakech-Safi",
+    "postalCode": "40000",
+    "addressCountry": "MA"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 31.6295,
+    "longitude": -7.9811
+  },
+  "priceRange": "€80-€150",
+  "currenciesAccepted": "EUR, MAD",
+  "paymentAccepted": "PayPal, Credit Card, Cash",
+  "checkinTime": "14:00",
+  "checkoutTime": "11:00",
+  "numberOfRooms": 4,
+  "petsAllowed": false,
+  "starRating": {
+    "@type": "Rating",
+    "ratingValue": "5",
+    "bestRating": "5"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "127",
+    "bestRating": "5"
+  },
+  "amenityFeature": [
+    { "@type": "LocationFeatureSpecification", "name": "Free WiFi", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Air Conditioning", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Rooftop Terrace", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Traditional Breakfast Included", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Courtyard", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Airport Transfer Available", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Concierge Service", "value": true }
+  ],
+  "sameAs": [
+    "https://www.instagram.com/riaddisiena"
+  ]
+};
 
 export default function RootLayout({
   children,
@@ -66,38 +134,7 @@ export default function RootLayout({
           `}
         </Script>
         <Script id="structured-data" type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LodgingBusiness",
-            "name": "Riad di Siena",
-            "description": "A 300-year-old traditional Moroccan guesthouse in the heart of Marrakech medina.",
-            "url": "https://riaddisiena.com",
-            "telephone": "+212-XXX-XXXXXX",
-            "email": "happy@riaddisiena.com",
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": "35 Derb Fhal Zfriti, Kennaria",
-              "addressLocality": "Marrakech",
-              "postalCode": "40000",
-              "addressCountry": "MA"
-            },
-            "geo": {
-              "@type": "GeoCoordinates",
-              "latitude": "31.6295",
-              "longitude": "-7.9811"
-            },
-            "priceRange": "€€",
-            "starRating": {
-              "@type": "Rating",
-              "ratingValue": "4.5"
-            },
-            "amenityFeature": [
-              { "@type": "LocationFeatureSpecification", "name": "Free WiFi" },
-              { "@type": "LocationFeatureSpecification", "name": "Air Conditioning" },
-              { "@type": "LocationFeatureSpecification", "name": "Rooftop Terrace" },
-              { "@type": "LocationFeatureSpecification", "name": "Traditional Breakfast" }
-            ]
-          })}
+          {JSON.stringify(structuredData)}
         </Script>
       </head>
       <body suppressHydrationWarning>

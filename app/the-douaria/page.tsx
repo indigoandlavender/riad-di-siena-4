@@ -199,9 +199,9 @@ export default function TheDouariaPage() {
               {rooms.map((room, index) => (
                 <div 
                   key={room.Room_ID}
-                  className="grid md:grid-cols-2 gap-12 items-center"
+                  className="grid md:grid-cols-2 gap-12 items-start"
                 >
-                  <div className={`aspect-[4/3] bg-foreground/10 ${index % 2 === 1 ? 'md:order-2' : ''}`}>
+                  <div className={`aspect-[3/4] bg-foreground/10 ${index % 2 === 1 ? 'md:order-2' : ''}`}>
                     {room.Image_URL && (
                       <img 
                         src={room.Image_URL} 
@@ -210,7 +210,7 @@ export default function TheDouariaPage() {
                       />
                     )}
                   </div>
-                  <div className={index % 2 === 1 ? 'md:order-1' : ''}>
+                  <div className={`pt-4 md:pt-8 ${index % 2 === 1 ? 'md:order-1' : ''}`}>
                     <h3 className="font-serif text-2xl mb-2">{room.Name}</h3>
                     <p className="text-foreground/60 text-sm mb-4">From {formatPrice(parseFloat(room.Price_EUR))} / night</p>
                     <p className="text-foreground/70 leading-relaxed mb-6">{room.Description}</p>

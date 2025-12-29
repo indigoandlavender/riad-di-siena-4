@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "The Desert Camp",
-  description: "Sahara desert camp at Erg Chebbi. Sleep under stars in traditional nomad tents. Camel treks, dune sunsets, and silence you can hear.",
+  description: "Luxury Sahara desert camp at Erg Chebbi dunes, Morocco. Traditional nomad tents, camel treks at sunset, stargazing, and silence. Part of the Riad di Siena collection.",
   openGraph: {
     title: "The Desert Camp | Riad di Siena",
-    description: "Sahara desert camp experience at Erg Chebbi, Morocco.",
+    description: "Luxury Sahara desert camp at Erg Chebbi. Traditional tents, camel treks, stargazing.",
+  },
+  alternates: {
+    canonical: "https://riaddisiena.com/the-desert-camp",
   },
 };
 

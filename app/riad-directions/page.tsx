@@ -11,6 +11,7 @@ interface Direction {
   Caption_ES: string;
   Caption_IT: string;
   Caption_PT: string;
+  Caption_AR: string;
   Image_URL: string;
 }
 
@@ -21,9 +22,10 @@ interface DirectionsSetting {
   ES: string;
   IT: string;
   PT: string;
+  AR: string;
 }
 
-type Language = "en" | "fr" | "es" | "it" | "pt";
+type Language = "en" | "fr" | "es" | "it" | "pt" | "ar";
 
 const LANGUAGE_LABELS: Record<Language, string> = {
   en: "EN",
@@ -31,6 +33,7 @@ const LANGUAGE_LABELS: Record<Language, string> = {
   es: "ES",
   it: "IT",
   pt: "PT",
+  ar: "AR",
 };
 
 export default function RiadDirectionsPage() {
@@ -58,6 +61,7 @@ export default function RiadDirectionsPage() {
       case "es": return step.Caption_ES || step.Caption;
       case "it": return step.Caption_IT || step.Caption;
       case "pt": return step.Caption_PT || step.Caption;
+      case "ar": return step.Caption_AR || step.Caption;
       default: return step.Caption;
     }
   };
@@ -70,6 +74,7 @@ export default function RiadDirectionsPage() {
       case "es": return setting.ES || setting.EN || fallback;
       case "it": return setting.IT || setting.EN || fallback;
       case "pt": return setting.PT || setting.EN || fallback;
+      case "ar": return setting.AR || setting.EN || fallback;
       default: return setting.EN || fallback;
     }
   };
@@ -78,9 +83,10 @@ export default function RiadDirectionsPage() {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
     
+    const isRTL = language === "ar";
     const stepsHTML = currentDirections.map((step) => `
       <div style="margin-bottom: 24px; page-break-inside: avoid;">
-        <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="display: flex; align-items: flex-start; gap: 16px; direction: ${isRTL ? 'rtl' : 'ltr'};">
           <div style="width: 28px; height: 28px; border-radius: 50%; background: #4a5043; color: #faf8f5; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">
             ${step.Step_Number}
           </div>
@@ -91,7 +97,7 @@ export default function RiadDirectionsPage() {
     
     printWindow.document.write(`
       <!DOCTYPE html>
-      <html>
+      <html dir="${isRTL ? 'rtl' : 'ltr'}">
         <head>
           <title>Walking Directions - Riad di Siena (No. 37)</title>
           <style>
@@ -121,7 +127,7 @@ export default function RiadDirectionsPage() {
   };
 
   return (
-    <div className="min-h-screen pt-24 bg-sand">
+    <div className="min-h-screen pt-24 bg-sand" dir={language === "ar" ? "rtl" : "ltr"}>
       <div className="max-w-3xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="text-center mb-8">

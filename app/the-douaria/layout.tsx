@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "The Douaria",
-  description: "Our modern annex across the alley. Three contemporary rooms with rooftop terrace, designed for guests who want traditional Marrakech with modern comfort.",
+  description: "Modern annex to Riad di Siena, steps from the main house. Three contemporary rooms with private rooftop terrace in Marrakech medina. Traditional location, modern comfort.",
   openGraph: {
     title: "The Douaria | Riad di Siena",
-    description: "Modern annex with rooftop terrace in Marrakech medina.",
+    description: "Modern annex with private rooftop terrace in Marrakech medina. Three contemporary rooms.",
+  },
+  alternates: {
+    canonical: "https://riaddisiena.com/the-douaria",
   },
 };
 

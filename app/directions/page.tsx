@@ -11,6 +11,7 @@ interface Direction {
   Caption_ES: string;
   Caption_IT: string;
   Caption_PT: string;
+  Caption_AR: string;
   Image_URL: string;
 }
 
@@ -21,9 +22,10 @@ interface DirectionsSetting {
   ES: string;
   IT: string;
   PT: string;
+  AR: string;
 }
 
-type Language = "en" | "fr" | "es" | "it" | "pt";
+type Language = "en" | "fr" | "es" | "it" | "pt" | "ar";
 
 const LANGUAGE_LABELS: Record<Language, string> = {
   en: "EN",
@@ -31,6 +33,7 @@ const LANGUAGE_LABELS: Record<Language, string> = {
   es: "ES",
   it: "IT",
   pt: "PT",
+  ar: "AR",
 };
 
 function DirectionsContent() {
@@ -82,6 +85,7 @@ function DirectionsContent() {
       case "es": return step.Caption_ES || step.Caption;
       case "it": return step.Caption_IT || step.Caption;
       case "pt": return step.Caption_PT || step.Caption;
+      case "ar": return step.Caption_AR || step.Caption;
       default: return step.Caption;
     }
   };
@@ -94,6 +98,7 @@ function DirectionsContent() {
       case "es": return setting.ES || setting.EN || fallback;
       case "it": return setting.IT || setting.EN || fallback;
       case "pt": return setting.PT || setting.EN || fallback;
+      case "ar": return setting.AR || setting.EN || fallback;
       default: return setting.EN || fallback;
     }
   };
@@ -152,7 +157,7 @@ function DirectionsContent() {
   };
 
   return (
-    <div className="min-h-screen pt-24 bg-sand">
+    <div className="min-h-screen pt-24 bg-sand" dir={language === "ar" ? "rtl" : "ltr"}>
       <div className="max-w-3xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="text-center mb-8">

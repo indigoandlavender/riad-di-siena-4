@@ -233,7 +233,7 @@ export default function RoomsPage() {
                   </div>
                 </div>
 
-                <div className={index % 2 === 1 ? "md:order-1" : ""}>
+                <div className={`pt-4 md:pt-8 ${index % 2 === 1 ? "md:order-1" : ""}`}>
                   <p className="text-xs tracking-widest text-muted-foreground mb-3">
                     FROM {formatPrice(parseFloat(room.Price_EUR))} / NIGHT
                   </p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Script from "next/script";
 import FAQAccordion from "@/components/FAQAccordion";
 
 interface FAQItem {
@@ -29,8 +30,29 @@ export default function FAQPage() {
     sections[item.Section].push(item);
   });
 
+  // Generate FAQ Schema
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map((item) => ({
+      "@type": "Question",
+      "name": item.Question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.Answer,
+      },
+    })),
+  };
+
   return (
     <div className="min-h-screen pt-24">
+      {/* FAQ Schema */}
+      {faqItems.length > 0 && (
+        <Script id="faq-schema" type="application/ld+json">
+          {JSON.stringify(faqSchema)}
+        </Script>
+      )}
+
       {/* Hero */}
       <section className="relative h-[60vh] flex items-center justify-center bg-[#e8e0d4]">
         <div className="absolute inset-0 bg-foreground/20" />
