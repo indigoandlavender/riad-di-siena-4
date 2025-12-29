@@ -222,7 +222,7 @@ export default function RoomsPage() {
             {rooms.map((room, index) => (
               <article key={room.Room_ID} className="grid md:grid-cols-2 gap-12 items-start">
                 <div className={index % 2 === 1 ? "md:order-2" : ""}>
-                  <div className="aspect-[4/3] bg-foreground/5 overflow-hidden">
+                  <div className="aspect-[3/4] bg-foreground/5 overflow-hidden">
                     {room.Image_URL ? (
                       <img src={room.Image_URL} alt={room.Name} className="w-full h-full object-cover" />
                     ) : (
