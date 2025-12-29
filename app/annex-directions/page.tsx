@@ -184,10 +184,11 @@ export default function AnnexDirectionsPage() {
             className="flex items-center gap-2 text-xs tracking-widest text-foreground/50 hover:text-foreground/70 transition-colors"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.25">
-              <path d="M8 2v8M8 10L5 7M8 10l3-3" />
-              <path d="M2 12v2h12v-2" />
+              <rect x="3" y="6" width="10" height="7" rx="1" />
+              <path d="M4 6V3a1 1 0 011-1h6a1 1 0 011 1v3" />
+              <path d="M6 10h4" />
             </svg>
-            {getText("save_offline", "SAVE FOR OFFLINE")}
+            {getText("save_offline", "PRINT FOR OFFLINE")}
           </button>
         </div>
 
