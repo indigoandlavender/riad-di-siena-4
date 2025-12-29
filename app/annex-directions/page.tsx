@@ -65,6 +65,11 @@ export default function AnnexDirectionsPage() {
 
   const currentDirections = getDisplayDirections();
 
+  // Check if text contains Arabic characters
+  const isArabicText = (text: string): boolean => {
+    return /[\u0600-\u06FF]/.test(text);
+  };
+
   const getCaption = (step: Direction): string => {
     switch (language) {
       case "fr": return step.Caption_FR || step.Caption;
@@ -137,33 +142,56 @@ export default function AnnexDirectionsPage() {
   };
 
   return (
-    <div className="min-h-screen pt-24 bg-sand" dir={language === "ar" ? "rtl" : "ltr"}>
+    <div className="min-h-screen pt-24 bg-sand">
       <div className="max-w-3xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="font-serif text-2xl md:text-3xl text-foreground/80 mb-4">
-            {getText("page_title", "Walking Directions")}
-          </h1>
-          <p className="text-foreground/60 text-sm">
-            {getText("annex_subtitle", "To The Douaria (No. 35)")}
-          </p>
+          {(() => {
+            const title = getText("page_title", "Walking Directions");
+            return (
+              <h1 className="font-serif text-2xl md:text-3xl text-foreground/80 mb-4" dir={isArabicText(title) ? "rtl" : "ltr"}>
+                {title}
+              </h1>
+            );
+          })()}
+          {(() => {
+            const subtitle = getText("annex_subtitle", "To The Douaria (No. 35)");
+            return (
+              <p className="text-foreground/60 text-sm" dir={isArabicText(subtitle) ? "rtl" : "ltr"}>
+                {subtitle}
+              </p>
+            );
+          })()}
         </div>
 
         {/* Google Maps Warning Note */}
         <div className="bg-cream border border-foreground/10 p-6 mb-10 text-center">
-          <p className="text-foreground/70 text-sm leading-relaxed">
-            <span className="font-medium text-foreground/80">{getText("note_title", "A gentle note:")}</span> {getText("note_text", "Google Maps will lead you to No. 43, which is a different riad. Trust these directions instead—they were written by someone who has walked this path many times. If you need help along the way, just send us a message and we'll guide you home.")}
-          </p>
+          {(() => {
+            const noteTitle = getText("note_title", "A gentle note:");
+            const noteText = getText("note_text", "Google Maps will lead you to No. 43, which is a different riad. Trust these directions instead—they were written by someone who has walked this path many times. If you need help along the way, just send us a message and we'll guide you home.");
+            const isArabic = isArabicText(noteTitle) || isArabicText(noteText);
+            return (
+              <p className="text-foreground/70 text-sm leading-relaxed" dir={isArabic ? "rtl" : "ltr"}>
+                <span className="font-medium text-foreground/80">{noteTitle}</span> {noteText}
+              </p>
+            );
+          })()}
         </div>
 
         {/* Link to Main Riad Directions */}
         <div className="flex justify-center mb-8">
-          <Link 
-            href="/riad-directions"
-            className="text-xs tracking-widest text-foreground/50 hover:text-foreground/70 transition-colors"
-          >
-            {getText("link_to_riad", "← Looking for Riad di Siena (No. 37)?")}
-          </Link>
+          {(() => {
+            const linkText = getText("link_to_riad", "← Looking for Riad di Siena (No. 37)?");
+            return (
+              <Link 
+                href="/riad-directions"
+                className="text-xs tracking-widest text-foreground/50 hover:text-foreground/70 transition-colors"
+                dir={isArabicText(linkText) ? "rtl" : "ltr"}
+              >
+                {linkText}
+              </Link>
+            );
+          })()}
         </div>
 
         {/* Language Toggle */}
@@ -200,14 +228,17 @@ export default function AnnexDirectionsPage() {
 
         {/* Direction Steps */}
         <div className="space-y-12">
-          {currentDirections.map((step) => (
-            <div key={step.Step_Number} className="flex gap-6">
+          {currentDirections.map((step) => {
+            const caption = getCaption(step);
+            const captionIsArabic = isArabicText(caption);
+            return (
+            <div key={step.Step_Number} className={`flex gap-6 ${captionIsArabic ? 'flex-row-reverse' : ''}`}>
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-olive text-sand flex items-center justify-center text-sm font-medium">
                 {step.Step_Number}
               </div>
               <div className="flex-1">
-                <p className="text-foreground/70 leading-relaxed mb-4">
-                  {getCaption(step)}
+                <p className={`text-foreground/70 leading-relaxed mb-4 ${captionIsArabic ? 'text-right' : ''}`} dir={captionIsArabic ? 'rtl' : 'ltr'}>
+                  {caption}
                 </p>
                 {step.Image_URL && (
                   <div className="aspect-video bg-foreground/5 overflow-hidden rounded">
@@ -220,6 +251,7 @@ export default function AnnexDirectionsPage() {
                 )}
               </div>
             </div>
+            );
           ))}
         </div>
       </div>

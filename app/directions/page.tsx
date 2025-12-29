@@ -79,6 +79,11 @@ function DirectionsContent() {
 
   const currentDirections = getDisplayDirections();
 
+  // Check if text contains Arabic characters
+  const isArabicText = (text: string): boolean => {
+    return /[\u0600-\u06FF]/.test(text);
+  };
+
   const getCaption = (step: Direction): string => {
     switch (language) {
       case "fr": return step.Caption_FR || step.Caption;
@@ -157,26 +162,43 @@ function DirectionsContent() {
   };
 
   return (
-    <div className="min-h-screen pt-24 bg-sand" dir={language === "ar" ? "rtl" : "ltr"}>
+    <div className="min-h-screen pt-24 bg-sand">
       <div className="max-w-3xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="font-serif text-2xl md:text-3xl text-foreground/80 mb-4">
-            {getText("page_title", "Walking Directions")}
-          </h1>
-          <p className="text-foreground/60 text-sm">
-            {building === "main" 
+          {(() => {
+            const title = getText("page_title", "Walking Directions");
+            return (
+              <h1 className="font-serif text-2xl md:text-3xl text-foreground/80 mb-4" dir={isArabicText(title) ? "rtl" : "ltr"}>
+                {title}
+              </h1>
+            );
+          })()}
+          {(() => {
+            const subtitle = building === "main" 
               ? getText("main_subtitle", "To Riad di Siena (No. 37)") 
-              : getText("annex_subtitle", "To The Douaria (No. 35)")}
-          </p>
+              : getText("annex_subtitle", "To The Douaria (No. 35)");
+            return (
+              <p className="text-foreground/60 text-sm" dir={isArabicText(subtitle) ? "rtl" : "ltr"}>
+                {subtitle}
+              </p>
+            );
+          })()}
         </div>
 
         {/* Google Maps Warning Note */}
         <div className="bg-cream border border-foreground/10 p-6 mb-10 text-center">
-          <p className="text-foreground/70 text-sm leading-relaxed">
-            <span className="font-medium text-foreground/80">{getText("note_title", "A gentle note:")}</span>{" "}
-            {getText("note_text", "Google Maps will lead you to No. 43, which is a different riad. Trust these directions instead—they were written by someone who has walked this path many times. If you need help along the way, just send us a message and we'll guide you home.")}
-          </p>
+          {(() => {
+            const noteTitle = getText("note_title", "A gentle note:");
+            const noteText = getText("note_text", "Google Maps will lead you to No. 43, which is a different riad. Trust these directions instead—they were written by someone who has walked this path many times. If you need help along the way, just send us a message and we'll guide you home.");
+            const isArabic = isArabicText(noteTitle) || isArabicText(noteText);
+            return (
+              <p className="text-foreground/70 text-sm leading-relaxed" dir={isArabic ? "rtl" : "ltr"}>
+                <span className="font-medium text-foreground/80">{noteTitle}</span>{" "}
+                {noteText}
+              </p>
+            );
+          })()}
         </div>
 
         {/* Toggle Building */}
@@ -237,14 +259,17 @@ function DirectionsContent() {
 
         {/* Direction Steps */}
         <div className="space-y-12">
-          {currentDirections.map((step) => (
-            <div key={`${building}-${step.Step_Number}`} className="flex gap-6">
+          {currentDirections.map((step) => {
+            const caption = getCaption(step);
+            const captionIsArabic = isArabicText(caption);
+            return (
+            <div key={`${building}-${step.Step_Number}`} className={`flex gap-6 ${captionIsArabic ? 'flex-row-reverse' : ''}`}>
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-olive text-sand flex items-center justify-center text-sm font-medium">
                 {step.Step_Number}
               </div>
               <div className="flex-1">
-                <p className="text-foreground/70 leading-relaxed mb-4">
-                  {getCaption(step)}
+                <p className={`text-foreground/70 leading-relaxed mb-4 ${captionIsArabic ? 'text-right' : ''}`} dir={captionIsArabic ? 'rtl' : 'ltr'}>
+                  {caption}
                 </p>
                 {step.Image_URL && (
                   <div className="aspect-video bg-foreground/5 overflow-hidden rounded">
@@ -257,7 +282,8 @@ function DirectionsContent() {
                 )}
               </div>
             </div>
-          ))}
+          );
+          })}
         </div>
       </div>
     </div>
