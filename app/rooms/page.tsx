@@ -266,9 +266,9 @@ export default function RoomsPage() {
                   ) : (
                     <button
                       onClick={() => openBookingModal(room)}
-                      className="text-xs tracking-widest border border-foreground px-8 py-4 hover:bg-foreground hover:text-cream transition-colors"
+                      className="text-xs tracking-widest border-b border-foreground/30 pb-1 hover:border-foreground transition-colors"
                     >
-                      CHECK AVAILABILITY
+                      BOOK THIS ROOM
                     </button>
                   )}
                 </div>

@@ -7,13 +7,31 @@ interface TrainingItem {
   Category: string;
   Question: string;
   Answer: string;
+  Answer_FR?: string;
+  Answer_ES?: string;
+  Answer_IT?: string;
+  Answer_PT?: string;
+  Answer_AR?: string;
   Keywords: string;
   Order: string;
 }
 
 interface ChatRequest {
   message: string;
+  language?: string;
   history?: { role: string; content: string }[];
+}
+
+// Get answer in the requested language
+function getLocalizedAnswer(item: TrainingItem, language: string): string {
+  switch (language) {
+    case "fr": return item.Answer_FR || item.Answer;
+    case "es": return item.Answer_ES || item.Answer;
+    case "it": return item.Answer_IT || item.Answer;
+    case "pt": return item.Answer_PT || item.Answer;
+    case "ar": return item.Answer_AR || item.Answer;
+    default: return item.Answer;
+  }
 }
 
 // Simple keyword matching to find relevant answers
@@ -79,7 +97,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { message, history }: ChatRequest = await request.json();
+    const { message, language = "en", history }: ChatRequest = await request.json();
     
     if (!message) {
       return NextResponse.json({ error: "Message required" }, { status: 400 });
@@ -94,12 +112,12 @@ export async function POST(request: Request) {
     const greetingItem = training.find(t => t.Category?.toLowerCase() === "greeting");
     
     // Check for greeting
-    const greetingWords = ["hi", "hello", "hey", "good morning", "good afternoon", "good evening", "salaam", "bonjour"];
+    const greetingWords = ["hi", "hello", "hey", "good morning", "good afternoon", "good evening", "salaam", "bonjour", "hola", "ciao", "olá", "مرحبا", "السلام عليكم"];
     const isGreeting = greetingWords.some(g => message.toLowerCase().trim().startsWith(g));
     
     if (isGreeting && greetingItem) {
       return NextResponse.json({ 
-        response: greetingItem.Answer,
+        response: getLocalizedAnswer(greetingItem, language),
         category: "greeting"
       });
     }
@@ -109,7 +127,7 @@ export async function POST(request: Request) {
     
     if (match) {
       return NextResponse.json({ 
-        response: match.Answer,
+        response: getLocalizedAnswer(match, language),
         category: match.Category,
         matched_question: match.Question
       });
@@ -117,8 +135,9 @@ export async function POST(request: Request) {
 
     // Default fallback response
     const fallbackItem = training.find(t => t.Category?.toLowerCase() === "fallback");
-    const fallbackResponse = fallbackItem?.Answer || 
-      "I'd be happy to help you with that. For specific inquiries about rooms, availability, or bookings, please reach out to us directly through our contact page or WhatsApp. Is there anything else about Riad di Siena I can help you with?";
+    const fallbackResponse = fallbackItem 
+      ? getLocalizedAnswer(fallbackItem, language)
+      : "I'd be happy to help you with that. For specific inquiries about rooms, availability, or bookings, please reach out to us directly through our contact page or WhatsApp. Is there anything else about Riad di Siena I can help you with?";
 
     return NextResponse.json({ 
       response: fallbackResponse,

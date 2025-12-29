@@ -11,6 +11,7 @@ interface Direction {
   Caption_ES: string;
   Caption_IT: string;
   Caption_PT: string;
+  Caption_AR: string;
   Image_URL: string;
 }
 

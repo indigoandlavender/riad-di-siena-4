@@ -3,6 +3,7 @@ import Script from 'next/script'
 import { CurrencyProvider } from '@/components/CurrencyContext'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import Chatbot from '@/components/Chatbot'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -142,6 +143,7 @@ export default function RootLayout({
           <Header />
           <main>{children}</main>
           <Footer />
+          <Chatbot />
         </CurrencyProvider>
       </body>
     </html>

@@ -10,6 +10,7 @@ interface DirectionsSetting {
   ES: string;
   IT: string;
   PT: string;
+  AR: string;
 }
 
 export async function GET() {
