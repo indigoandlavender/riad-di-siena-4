@@ -252,7 +252,7 @@ export default function AnnexDirectionsPage() {
               </div>
             </div>
             );
-          ))}
+          })}
         </div>
       </div>
     </div>

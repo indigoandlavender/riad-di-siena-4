@@ -242,7 +242,7 @@ export default function RiadDirectionsPage() {
               </div>
             </div>
             );
-          ))}
+          })}
         </div>
       </div>
     </div>
