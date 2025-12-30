@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import PageHeader from "@/components/PageHeader";
 
 interface Section {
   title: string;
@@ -67,14 +66,25 @@ export default function NexusLegalPage({ pageId, fallbackTitle, localApiEndpoint
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-24">
-        <PageHeader title={fallbackTitle} />
-        <section className="py-16 bg-sand">
-          <div className="max-w-3xl mx-auto px-6">
-            <div className="animate-pulse space-y-4">
-              <div className="h-4 bg-foreground/10 rounded w-3/4"></div>
-              <div className="h-4 bg-foreground/10 rounded w-1/2"></div>
-              <div className="h-4 bg-foreground/10 rounded w-5/6"></div>
+      <div className="min-h-screen bg-[#f5f0e8] text-[#2a2520]">
+        <section className="pt-32 pb-12 md:pt-40 md:pb-16">
+          <div className="container mx-auto px-6 lg:px-16 max-w-3xl">
+            <p className="text-xs tracking-[0.3em] uppercase text-[#2a2520]/40 mb-6">
+              Legal
+            </p>
+            <h1 className="font-serif text-4xl md:text-5xl text-[#2a2520]/90">
+              {fallbackTitle}
+            </h1>
+          </div>
+        </section>
+        <section className="pb-24 md:pb-32">
+          <div className="container mx-auto px-6 lg:px-16 max-w-3xl">
+            <div className="border-t border-[#2a2520]/10 pt-12">
+              <div className="animate-pulse space-y-4">
+                <div className="h-4 bg-[#2a2520]/10 rounded w-3/4"></div>
+                <div className="h-4 bg-[#2a2520]/10 rounded w-1/2"></div>
+                <div className="h-4 bg-[#2a2520]/10 rounded w-5/6"></div>
+              </div>
             </div>
           </div>
         </section>
@@ -83,32 +93,40 @@ export default function NexusLegalPage({ pageId, fallbackTitle, localApiEndpoint
   }
 
   return (
-    <div className="min-h-screen pt-24">
-      <PageHeader title={content?.title || fallbackTitle} />
+    <div className="min-h-screen bg-[#f5f0e8] text-[#2a2520]">
+      {/* Hero */}
+      <section className="pt-32 pb-12 md:pt-40 md:pb-16">
+        <div className="container mx-auto px-6 lg:px-16 max-w-3xl">
+          <p className="text-xs tracking-[0.3em] uppercase text-[#2a2520]/40 mb-6">
+            Legal
+          </p>
+          <h1 className="font-serif text-4xl md:text-5xl text-[#2a2520]/90">
+            {content?.title || fallbackTitle}
+          </h1>
+        </div>
+      </section>
 
-      <section className="py-16 bg-sand">
-        <div className="max-w-3xl mx-auto px-6">
-          {content?.sections && content.sections.length > 0 ? (
-            <div className="space-y-10">
-              {content.sections.map((section, index) => (
-                <div key={index}>
-                  {section.title && section.title !== "Intro" && (
-                    <h2 className="font-serif text-lg text-foreground/80 mb-3">{section.title}</h2>
-                  )}
-                  <p className="text-foreground/60 leading-relaxed text-sm whitespace-pre-line">
-                    {section.content}
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-foreground/60">Content not available.</p>
-          )}
-
-          {/* Source indicator (optional - for debugging) */}
-          {/* <p className="mt-12 text-xs text-foreground/30">
-            Source: {useNexus ? "Nexus" : "Local"}
-          </p> */}
+      {/* Content */}
+      <section className="pb-24 md:pb-32">
+        <div className="container mx-auto px-6 lg:px-16 max-w-3xl">
+          <div className="border-t border-[#2a2520]/10 pt-12">
+            {content?.sections && content.sections.length > 0 ? (
+              <div className="space-y-10">
+                {content.sections.map((section, index) => (
+                  <div key={index}>
+                    {section.title && section.title !== "Intro" && (
+                      <h2 className="font-serif text-xl text-[#2a2520]/90 mb-4">{section.title}</h2>
+                    )}
+                    <p className="text-[#2a2520]/50 leading-relaxed whitespace-pre-line">
+                      {section.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-[#2a2520]/50">Content not available.</p>
+            )}
+          </div>
         </div>
       </section>
     </div>
