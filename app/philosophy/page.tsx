@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 
 interface Section {
   Section: string;
@@ -45,7 +44,7 @@ export default function PhilosophyPage() {
           <p className="text-xs tracking-[0.4em] uppercase text-white/60 mb-8">
             Riad di Siena
           </p>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl tracking-[0.15em] font-light mb-8 text-white">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.15em] font-light mb-8 text-white">
             P H I L O S O P H Y
           </h1>
           {hero?.Subtitle && (
@@ -136,23 +135,6 @@ export default function PhilosophyPage() {
         </section>
       )}
 
-      {/* CTA Section */}
-      <section className="py-24 md:py-32 bg-[#f5f0e8]">
-        <div className="container mx-auto px-6 lg:px-16 max-w-3xl text-center">
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl mb-8 text-[#2a2520]/90">
-            Come as you are.
-          </h2>
-          <p className="text-[#2a2520]/50 leading-relaxed mb-12 text-lg">
-            Three hundred years of quiet. Zahra at the door. Breakfast when you need it.
-          </p>
-          <Link
-            href="/rooms"
-            className="inline-block border border-[#2a2520]/20 px-12 py-4 text-xs tracking-[0.2em] uppercase hover:bg-[#2a2520] hover:text-[#f5f0e8] transition-colors"
-          >
-            View Rooms
-          </Link>
-        </div>
-      </section>
     </div>
   );
 }

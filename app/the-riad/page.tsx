@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
 
 interface Section {
@@ -29,103 +28,140 @@ export default function TheRiadPage() {
   const heroImage = hero?.Image_URL || "";
 
   return (
-    <div className="min-h-screen pt-24">
-      {/* Hero Image */}
-      <section className="relative h-[60vh] flex items-center justify-center">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: heroImage ? `url('${heroImage}')` : undefined }}
-        />
-        <div className="absolute inset-0 bg-foreground/40" />
-        <div className="relative z-10 text-center text-sand px-6 max-w-3xl">
-          <p className="text-xs tracking-[0.4em] mb-6">MARRAKECH MEDINA</p>
-          <h1 className="font-serif text-4xl md:text-5xl mb-6">The House</h1>
-          {hero?.Title && (
-            <p className="text-lg font-light leading-relaxed max-w-xl mx-auto">{hero.Title}</p>
-          )}
+    <div className="bg-[#f5f0e8] text-[#2a2520] min-h-screen">
+      {/* Hero - Full viewport with image */}
+      <section className="min-h-screen flex items-center justify-center relative">
+        {heroImage && (
+          <>
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url('${heroImage}')` }}
+            />
+            <div className="absolute inset-0 bg-[#2a2520]/40" />
+          </>
+        )}
+        <div className="container mx-auto px-6 lg:px-16 text-center max-w-4xl relative z-10">
+          <p className="text-xs tracking-[0.4em] uppercase text-white/60 mb-8">
+            Marrakech Medina
+          </p>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.15em] font-light mb-8 text-white">
+            T H E<br />H O U S E
+          </h1>
+          <p className="text-xl md:text-2xl text-white/80 font-serif italic max-w-2xl mx-auto">
+            A 300-year-old sanctuary in the heart of the medina
+          </p>
+        </div>
+        
+        {/* Scroll indicator */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+          <div className="w-[1px] h-16 bg-gradient-to-b from-white/0 via-white/30 to-white/0" />
         </div>
       </section>
 
-      {/* Flowing Prose */}
-      <section className="py-16 md:py-24 bg-sand">
-        <article className="max-w-xl mx-auto px-6 text-foreground/80 leading-relaxed">
-          
-          {hero?.Subtitle && (
-            <p className="mb-6">{hero.Subtitle}</p>
-          )}
-
-          {/* History Section */}
-          {history && (history.Title || history.Subtitle) && (
-            <>
-              <h2 className="font-display text-2xl md:text-3xl italic text-foreground/90 mt-12 mb-8">
-                {history.Title}
-              </h2>
-              {history.Subtitle && <p className="mb-6">{history.Subtitle}</p>}
-              {history.Body && <p className="mb-6">{history.Body}</p>}
-            </>
-          )}
-
-          {/* Authentic Section */}
-          {authentic && (authentic.Title || authentic.Subtitle) && (
-            <>
-              <h2 className="font-display text-2xl md:text-3xl italic text-foreground/90 mt-12 mb-8">
-                {authentic.Title}
-              </h2>
-              {authentic.Subtitle && <p className="mb-6">{authentic.Subtitle}</p>}
-              {authentic.Body && <p className="mb-6">{authentic.Body}</p>}
-            </>
-          )}
-
-          {/* Original Section */}
-          {original && (original.Title || original.Subtitle) && (
-            <>
-              <h2 className="font-display text-2xl md:text-3xl italic text-foreground/90 mt-12 mb-8">
-                {original.Title}
-              </h2>
-              {original.Subtitle && <p className="mb-6">{original.Subtitle}</p>}
-              {original.Body && <p className="mb-6">{original.Body}</p>}
-            </>
-          )}
-
-          {/* Courtyard Section */}
-          {courtyard && (courtyard.Title || courtyard.Subtitle) && (
-            <>
-              <h2 className="font-display text-2xl md:text-3xl italic text-foreground/90 mt-12 mb-8">
-                {courtyard.Title}
-              </h2>
-              {courtyard.Subtitle && <p className="mb-6">{courtyard.Subtitle}</p>}
-              {courtyard.Body && <p className="mb-6">{courtyard.Body}</p>}
-            </>
-          )}
-
-          {/* Location Section */}
-          {location && (location.Title || location.Subtitle) && (
-            <>
-              <h2 className="font-display text-2xl md:text-3xl italic text-foreground/90 mt-12 mb-8">
-                {location.Title}
-              </h2>
-              {location.Subtitle && <p className="mb-6">{location.Subtitle}</p>}
-              {location.Body && <p className="mb-6">{location.Body}</p>}
-            </>
-          )}
-
-          {/* Simple line divider */}
-          <div className="flex justify-center my-12">
-            <div className="w-12 h-px bg-foreground/30"></div>
+      {/* Opening prose */}
+      {hero?.Subtitle && (
+        <section className="py-24 md:py-32 border-t border-[#2a2520]/10">
+          <div className="container mx-auto px-6 lg:px-16">
+            <div className="max-w-3xl mx-auto">
+              <p className="text-[#2a2520]/70 leading-relaxed text-lg md:text-xl">
+                {hero.Subtitle}
+              </p>
+            </div>
           </div>
+        </section>
+      )}
 
-          {/* Soft CTA */}
-          <div className="text-center">
-            <Link
-              href="/rooms"
-              className="text-xs tracking-widest text-foreground/60 hover:text-foreground transition-colors"
-            >
-              View the rooms →
-            </Link>
+      {/* History Section */}
+      {history && (history.Title || history.Subtitle) && (
+        <section className="py-24 md:py-32 border-t border-[#2a2520]/10">
+          <div className="container mx-auto px-6 lg:px-16 max-w-5xl">
+            <div className="space-y-16">
+              {history?.Title && (
+                <div className="max-w-2xl mr-auto">
+                  <p className="font-serif text-2xl md:text-3xl text-[#2a2520]/90 leading-relaxed italic">
+                    {history.Title}
+                  </p>
+                </div>
+              )}
+              {history?.Subtitle && (
+                <div className="max-w-2xl ml-auto text-right">
+                  <p className="text-lg md:text-xl leading-relaxed text-[#2a2520]/60">
+                    {history.Subtitle}
+                  </p>
+                </div>
+              )}
+              {history?.Body && (
+                <div className="max-w-2xl mr-auto">
+                  <p className="text-lg leading-relaxed text-[#2a2520]/60">
+                    {history.Body}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
+        </section>
+      )}
 
-        </article>
-      </section>
+      {/* Authentic Section */}
+      {authentic?.Subtitle && (
+        <section className="py-24 md:py-32 bg-[#ebe5db]">
+          <div className="container mx-auto px-6 lg:px-16">
+            <div className="max-w-3xl mx-auto">
+              <p className="text-[#2a2520]/70 leading-relaxed text-lg md:text-xl text-center">
+                {authentic.Subtitle}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Original + Courtyard */}
+      {(original?.Subtitle || courtyard?.Subtitle) && (
+        <section className="py-24 md:py-32 border-t border-[#2a2520]/10">
+          <div className="container mx-auto px-6 lg:px-16 max-w-5xl">
+            <div className="space-y-16">
+              {original?.Subtitle && (
+                <div className="max-w-2xl ml-auto text-right">
+                  <p className="text-lg md:text-xl leading-relaxed text-[#2a2520]/60">
+                    {original.Subtitle}
+                  </p>
+                </div>
+              )}
+              {courtyard?.Subtitle && (
+                <div className="max-w-2xl mr-auto">
+                  <p className="text-lg md:text-xl leading-relaxed text-[#2a2520]/60">
+                    {courtyard.Subtitle}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Location Quote */}
+      {(location?.Title || location?.Subtitle) && (
+        <section className="py-16 md:py-20 border-y border-[#2a2520]/10 bg-[#f5f0e8]">
+          <div className="container mx-auto px-6 lg:px-16 max-w-4xl">
+            <div className="flex items-start gap-6">
+              <span className="font-serif text-6xl md:text-8xl text-[#2a2520]/20 leading-none">"</span>
+              <div>
+                {location?.Title && (
+                  <p className="font-serif text-xl md:text-2xl leading-relaxed text-[#2a2520]/80">
+                    {location.Title}
+                  </p>
+                )}
+                {location?.Subtitle && (
+                  <p className="text-[#2a2520]/40 text-sm mt-4">
+                    {location.Subtitle}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
     </div>
   );
 }

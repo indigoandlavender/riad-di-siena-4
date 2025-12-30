@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from "react";
 import BookingModal from "@/components/BookingModal";
-// import GalleryCarousel from "@/components/GalleryCarousel";
 import { useCurrency } from "@/components/CurrencyContext";
-// import ElfsightWidget, { ElfsightScript } from "@/components/ElfsightWidget";
 
 interface Room {
   Room_ID: string;
@@ -16,7 +14,7 @@ interface Room {
   Widget_ID?: string;
   iCal_URL?: string;
   features: string[];
-  Bookable?: string; // "Yes", "No", or empty (defaults to Yes)
+  Bookable?: string;
 }
 
 interface Hero {
@@ -181,52 +179,61 @@ export default function RoomsPage() {
     return null;
   };
 
-  // Show nothing until data loads to prevent flicker
   if (loading) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#2a2520]/20 border-t-[#2a2520] rounded-full animate-spin" />
       </div>
     );
   }
 
+  const heroImage = hero?.Image_URL || "";
+
   return (
-    <div className="min-h-screen pt-24">
-      {/* Hero with background image */}
-      <section className="relative h-[60vh] flex items-center justify-center">
-        {hero?.Image_URL && (
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url('${hero.Image_URL}')` }}
-          />
+    <div className="bg-[#f5f0e8] text-[#2a2520] min-h-screen">
+      {/* Hero - Full viewport with image */}
+      <section className="min-h-screen flex items-center justify-center relative">
+        {heroImage && (
+          <>
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url('${heroImage}')` }}
+            />
+            <div className="absolute inset-0 bg-[#2a2520]/40" />
+          </>
         )}
-        <div className="absolute inset-0 bg-foreground/40" />
-        <div className="relative z-10 text-center text-sand px-6 max-w-3xl">
-          <p className="text-xs tracking-[0.4em] mb-6">RIAD DI SIENA</p>
-          {hero?.Title && (
-            <h1 className="font-serif text-4xl md:text-5xl mb-6">
-              {hero.Title}
-            </h1>
-          )}
+        <div className="container mx-auto px-6 lg:px-16 text-center max-w-4xl relative z-10">
+          <p className="text-xs tracking-[0.4em] uppercase text-white/60 mb-8">
+            Riad di Siena
+          </p>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.15em] font-light mb-8 text-white">
+            R O O M S
+          </h1>
           {hero?.Subtitle && (
-            <p className="text-lg font-light leading-relaxed max-w-xl mx-auto">
+            <p className="text-xl md:text-2xl text-white/80 font-serif italic max-w-2xl mx-auto">
               {hero.Subtitle}
             </p>
           )}
         </div>
+        
+        {/* Scroll indicator */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+          <div className="w-[1px] h-16 bg-gradient-to-b from-white/0 via-white/30 to-white/0" />
+        </div>
       </section>
 
-      <section className="py-16 bg-cream">
+      {/* Rooms Grid */}
+      <section className="py-24 md:py-32">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="space-y-24">
+          <div className="space-y-32">
             {rooms.map((room, index) => (
               <article key={room.Room_ID} className="grid md:grid-cols-2 gap-12 items-start">
                 <div className={index % 2 === 1 ? "md:order-2" : ""}>
-                  <div className="aspect-[3/4] bg-foreground/5 overflow-hidden">
+                  <div className="aspect-[3/4] overflow-hidden">
                     {room.Image_URL ? (
                       <img src={room.Image_URL} alt={room.Name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-foreground/20">
+                      <div className="w-full h-full bg-[#2a2520]/5 flex items-center justify-center text-[#2a2520]/20">
                         <BedIcon />
                       </div>
                     )}
@@ -234,11 +241,11 @@ export default function RoomsPage() {
                 </div>
 
                 <div className={`pt-4 md:pt-8 ${index % 2 === 1 ? "md:order-1" : ""}`}>
-                  <p className="text-xs tracking-widest text-muted-foreground mb-3">
+                  <p className="text-xs tracking-widest text-[#2a2520]/40 mb-3">
                     FROM {formatPrice(parseFloat(room.Price_EUR))} / NIGHT
                   </p>
-                  <h2 className="font-serif text-2xl text-foreground/90 mb-4">{room.Name}</h2>
-                  <p className="text-foreground/70 leading-relaxed mb-8">{room.Description}</p>
+                  <h2 className="font-serif text-2xl md:text-3xl text-[#2a2520]/90 mb-4 italic">{room.Name}</h2>
+                  <p className="text-[#2a2520]/60 leading-relaxed mb-8 text-lg">{room.Description}</p>
                   
                   {room.features && room.features.length > 0 && (
                     <div className="mb-8">
@@ -246,9 +253,9 @@ export default function RoomsPage() {
                         {room.features.map((feature) => {
                           const icon = getIconForFeature(feature);
                           return (
-                            <div key={feature} className="flex items-center gap-3 text-foreground/60">
-                              <span className="text-foreground/40">
-                                {icon || <span className="w-1.5 h-1.5 rounded-full bg-foreground/30 block" />}
+                            <div key={feature} className="flex items-center gap-3 text-[#2a2520]/50">
+                              <span className="text-[#2a2520]/30">
+                                {icon || <span className="w-1.5 h-1.5 rounded-full bg-[#2a2520]/30 block" />}
                               </span>
                               <span className="text-sm">{feature}</span>
                             </div>
@@ -258,15 +265,14 @@ export default function RoomsPage() {
                     </div>
                   )}
 
-                  {/* Check if room is bookable - defaults to yes unless explicitly "No" or room is "Jewel Box" */}
                   {room.Bookable?.toLowerCase() === "no" ? (
-                    <p className="text-xs tracking-widest text-muted-foreground italic">
+                    <p className="text-xs tracking-widest text-[#2a2520]/40 italic">
                       Not available for direct booking
                     </p>
                   ) : (
                     <button
                       onClick={() => openBookingModal(room)}
-                      className="text-xs tracking-widest border-b border-foreground/30 pb-1 hover:border-foreground transition-colors"
+                      className="text-xs tracking-widest border-b border-[#2a2520]/30 pb-1 hover:border-[#2a2520] transition-colors"
                     >
                       BOOK THIS ROOM
                     </button>
@@ -278,42 +284,11 @@ export default function RoomsPage() {
         </div>
       </section>
 
-      {/* Gallery Carousel - temporarily disabled
-      {gallery.length > 0 && (
-        <GalleryCarousel images={gallery} />
-      )}
-      */}
-
-      {/* Reviews section - temporarily disabled
-      <section className="py-24 bg-cream">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <p className="text-xs tracking-widest text-muted-foreground mb-4">REVIEWS</p>
-            <h2 className="font-serif text-xl text-foreground/80">What guests say</h2>
-          </div>
-          
-          <div className="space-y-16">
-            {rooms.filter(room => room.Widget_ID).map((room) => (
-              <div key={room.Room_ID}>
-                <p className="text-xs tracking-widest text-muted-foreground mb-6 text-center">
-                  {room.Name.toUpperCase()}
-                </p>
-                <ElfsightWidget widgetId={room.Widget_ID!} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <ElfsightScript />
-      */}
-
-      {/* Keep modal always mounted - let isOpen control visibility */}
+      {/* Keep modal always mounted */}
       <BookingModal
         isOpen={isModalOpen && selectedRoom !== null}
         onClose={() => {
           setIsModalOpen(false);
-          // Clear selectedRoom after a delay to let modal close gracefully
           setTimeout(() => setSelectedRoom(null), 300);
         }}
         item={selectedRoom ? {

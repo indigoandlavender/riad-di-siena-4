@@ -61,7 +61,7 @@ export default function FAQPage() {
           <p className="text-xs tracking-[0.4em] uppercase text-[#2a2520]/40 mb-8">
             Support
           </p>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl tracking-[0.15em] font-light mb-8">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.15em] font-light mb-8">
             F A Q
           </h1>
           <p className="text-xl text-[#2a2520]/50 max-w-xl mx-auto">

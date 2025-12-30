@@ -34,7 +34,7 @@ interface GalleryImage {
   Caption?: string;
 }
 
-// Minimal monochrome icons - 20x20, strokeWidth 1.25, no fills
+// Minimal monochrome icons
 const BedIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
     <rect x="1" y="8" width="18" height="8" rx="1" />
@@ -86,7 +86,6 @@ const SittingIcon = () => (
   </svg>
 );
 
-// Map features to icons
 const iconMap: Record<string, () => JSX.Element> = {
   "bed": BedIcon,
   "king": BedIcon,
@@ -153,55 +152,73 @@ export default function TheDouariaPage() {
   const heroImage = hero?.Image_URL || "";
 
   return (
-    <div className="min-h-screen pt-24">
-      {/* Hero */}
-      <section className="relative h-[60vh] flex items-center justify-center">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url('${heroImage}')` }}
-        />
-        <div className="absolute inset-0 bg-foreground/40" />
-        
-        <div className="relative z-10 text-center text-sand px-6 max-w-3xl">
+    <div className="bg-[#f5f0e8] text-[#2a2520] min-h-screen">
+      {/* Hero - Full viewport with image */}
+      <section className="min-h-screen flex items-center justify-center relative">
+        {heroImage && (
+          <>
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url('${heroImage}')` }}
+            />
+            <div className="absolute inset-0 bg-[#2a2520]/40" />
+          </>
+        )}
+        <div className="container mx-auto px-6 lg:px-16 text-center max-w-4xl relative z-10">
           {hero?.Location && (
-            <p className="text-xs tracking-[0.4em] mb-6">{hero.Location.toUpperCase()}</p>
+            <p className="text-xs tracking-[0.4em] uppercase text-white/60 mb-8">
+              {hero.Location}
+            </p>
           )}
-          <h1 className="font-serif text-4xl md:text-5xl mb-6">{hero?.Title || "The Douaria"}</h1>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.15em] font-light mb-8 text-white">
+            T H E<br />D O U A R I A
+          </h1>
           {hero?.Subtitle && (
-            <p className="text-lg font-light leading-relaxed max-w-xl mx-auto">{hero.Subtitle}</p>
+            <p className="text-xl md:text-2xl text-white/80 font-serif italic max-w-2xl mx-auto">
+              {hero.Subtitle}
+            </p>
           )}
+        </div>
+        
+        {/* Scroll indicator */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+          <div className="w-[1px] h-16 bg-gradient-to-b from-white/0 via-white/30 to-white/0" />
         </div>
       </section>
 
       {/* Description */}
-      <section className="py-20 bg-sand">
-        <div className="max-w-3xl mx-auto px-6">
-          <div className="text-foreground/70 leading-relaxed space-y-6">
-            {paragraphs.map((p, i) => (
-              <p key={i} dangerouslySetInnerHTML={{ __html: p.Content.replace(/douaria/gi, '<em>douaria</em>') }} />
-            ))}
+      {paragraphs.length > 0 && (
+        <section className="py-24 md:py-32 border-t border-[#2a2520]/10">
+          <div className="container mx-auto px-6 lg:px-16">
+            <div className="max-w-3xl mx-auto">
+              <div className="text-[#2a2520]/70 leading-relaxed text-lg md:text-xl space-y-6">
+                {paragraphs.map((p, i) => (
+                  <p key={i} dangerouslySetInnerHTML={{ __html: p.Content.replace(/douaria/gi, '<em>douaria</em>') }} />
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Rooms */}
-      <section className="py-20 bg-cream">
+      <section className="py-24 md:py-32 bg-[#ebe5db]">
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-16">
-            <p className="text-xs tracking-[0.3em] text-muted-foreground mb-4">THE STAY</p>
-            <h2 className="font-serif text-2xl md:text-3xl text-foreground/90">Three rooms, three moods</h2>
+            <p className="text-xs tracking-[0.3em] text-[#2a2520]/40 mb-4">THE STAY</p>
+            <h2 className="font-serif text-2xl md:text-3xl text-[#2a2520]/90 italic">Three rooms, three moods</h2>
           </div>
 
           {loading ? (
-            <div className="text-center text-foreground/50">Loading rooms...</div>
+            <div className="text-center text-[#2a2520]/50">Loading rooms...</div>
           ) : (
-            <div className="space-y-16">
+            <div className="space-y-24">
               {rooms.map((room, index) => (
                 <div 
                   key={room.Room_ID}
                   className="grid md:grid-cols-2 gap-12 items-start"
                 >
-                  <div className={`aspect-[3/4] bg-foreground/10 ${index % 2 === 1 ? 'md:order-2' : ''}`}>
+                  <div className={`aspect-[3/4] overflow-hidden ${index % 2 === 1 ? 'md:order-2' : ''}`}>
                     {room.Image_URL && (
                       <img 
                         src={room.Image_URL} 
@@ -211,17 +228,17 @@ export default function TheDouariaPage() {
                     )}
                   </div>
                   <div className={`pt-4 md:pt-8 ${index % 2 === 1 ? 'md:order-1' : ''}`}>
-                    <h3 className="font-serif text-2xl mb-2">{room.Name}</h3>
-                    <p className="text-foreground/60 text-sm mb-4">From {formatPrice(parseFloat(room.Price_EUR))} / night</p>
-                    <p className="text-foreground/70 leading-relaxed mb-6">{room.Description}</p>
+                    <h3 className="font-serif text-2xl mb-2 italic">{room.Name}</h3>
+                    <p className="text-[#2a2520]/50 text-sm mb-4">From {formatPrice(parseFloat(room.Price_EUR))} / night</p>
+                    <p className="text-[#2a2520]/60 leading-relaxed mb-6 text-lg">{room.Description}</p>
                     
                     <div className="flex flex-wrap gap-4 mb-6">
                       {room.features.map((feature) => {
                         const icon = getIconForFeature(feature);
                         return (
-                          <div key={feature} className="flex items-center gap-2 text-foreground/60">
-                            <span className="text-foreground/40">
-                              {icon || <span className="w-1.5 h-1.5 rounded-full bg-foreground/30 block" />}
+                          <div key={feature} className="flex items-center gap-2 text-[#2a2520]/50">
+                            <span className="text-[#2a2520]/30">
+                              {icon || <span className="w-1.5 h-1.5 rounded-full bg-[#2a2520]/30 block" />}
                             </span>
                             <span className="text-xs">{feature}</span>
                           </div>
@@ -230,13 +247,13 @@ export default function TheDouariaPage() {
                     </div>
                     
                     {room.Bookable?.toLowerCase() === "no" ? (
-                      <p className="text-xs tracking-widest text-muted-foreground italic">
+                      <p className="text-xs tracking-widest text-[#2a2520]/40 italic">
                         Not available for direct booking
                       </p>
                     ) : (
                       <button 
                         onClick={() => openBookingModal(room)}
-                        className="text-xs tracking-widest border-b border-foreground/30 pb-1 hover:border-foreground transition-colors"
+                        className="text-xs tracking-widest border-b border-[#2a2520]/30 pb-1 hover:border-[#2a2520] transition-colors"
                       >
                         BOOK THIS ROOM
                       </button>

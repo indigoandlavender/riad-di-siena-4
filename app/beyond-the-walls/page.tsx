@@ -43,51 +43,64 @@ export default function BeyondTheWallsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-sand flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#2a2520]/20 border-t-[#2a2520] rounded-full animate-spin" />
       </div>
     );
   }
 
+  const heroImage = hero?.Image_URL || "";
+
   return (
-    <div className="min-h-screen pt-24">
-      {/* Hero Section */}
-      <section className="relative h-[60vh] flex items-center justify-center">
-        {hero?.Image_URL && (
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url('${hero.Image_URL}')` }}
-          />
+    <div className="bg-[#f5f0e8] text-[#2a2520] min-h-screen">
+      {/* Hero - Full viewport with image */}
+      <section className="min-h-screen flex items-center justify-center relative">
+        {heroImage && (
+          <>
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url('${heroImage}')` }}
+            />
+            <div className="absolute inset-0 bg-[#2a2520]/40" />
+          </>
         )}
-        <div className="absolute inset-0 bg-foreground/40" />
-        <div className="relative z-10 text-center text-sand px-6 max-w-3xl">
-          <p className="text-xs tracking-[0.4em] mb-6">RIAD DI SIENA</p>
-          <h1 className="font-serif text-4xl md:text-5xl mb-6">
-            {hero?.Title || "Beyond the Walls"}
+        <div className="container mx-auto px-6 lg:px-16 text-center max-w-4xl relative z-10">
+          <p className="text-xs tracking-[0.4em] uppercase text-white/60 mb-8">
+            Riad di Siena
+          </p>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.15em] font-light mb-8 text-white">
+            B E Y O N D  T H E  W A L L S
           </h1>
           {hero?.Subtitle && (
-            <p className="text-lg font-light leading-relaxed max-w-xl mx-auto">
+            <p className="text-xl md:text-2xl text-white/80 font-serif italic max-w-2xl mx-auto">
               {hero.Subtitle}
             </p>
           )}
         </div>
-      </section>
-
-      {/* Intro Section */}
-      <section className="py-16 md:py-24 bg-sand">
-        <div className="max-w-xl mx-auto px-6 text-center">
-          {hero?.Intro && (
-            <p className="text-foreground/70 leading-relaxed">
-              {hero.Intro}
-            </p>
-          )}
+        
+        {/* Scroll indicator */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+          <div className="w-[1px] h-16 bg-gradient-to-b from-white/0 via-white/30 to-white/0" />
         </div>
       </section>
 
+      {/* Intro Section */}
+      {hero?.Intro && (
+        <section className="py-24 md:py-32 border-t border-[#2a2520]/10">
+          <div className="container mx-auto px-6 lg:px-16">
+            <div className="max-w-3xl mx-auto">
+              <p className="text-[#2a2520]/70 leading-relaxed text-lg md:text-xl text-center">
+                {hero.Intro}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Properties Grid */}
-      <section className="py-16 bg-cream">
+      <section className="py-24 md:py-32 bg-[#ebe5db]">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid md:grid-cols-2 gap-16">
             {properties.map((property) => (
               <Link 
                 key={property.Property_ID} 
@@ -95,23 +108,23 @@ export default function BeyondTheWallsPage() {
                 className="group block"
               >
                 <article>
-                  <div className="aspect-[4/3] bg-foreground/5 overflow-hidden mb-6">
+                  <div className="aspect-[4/3] overflow-hidden mb-8">
                     {property.Image_URL ? (
                       <img 
                         src={property.Image_URL} 
                         alt={property.Name} 
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-foreground/20">
+                      <div className="w-full h-full bg-[#2a2520]/5 flex items-center justify-center text-[#2a2520]/20">
                         No image
                       </div>
                     )}
                   </div>
-                  <h2 className="font-serif text-2xl text-foreground/90 mb-2">
+                  <h2 className="font-serif text-2xl md:text-3xl text-[#2a2520]/90 mb-3 italic">
                     {property.Name}
                   </h2>
-                  <p className="text-foreground/60 italic">
+                  <p className="text-[#2a2520]/50 text-lg">
                     {property.Tagline}
                   </p>
                 </article>
@@ -120,6 +133,7 @@ export default function BeyondTheWallsPage() {
           </div>
         </div>
       </section>
+
     </div>
   );
 }
