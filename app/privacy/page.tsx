@@ -7,27 +7,34 @@ export default async function PrivacyPage() {
   const page = await getLegalPageBySlug('privacy')
 
   return (
-    <div className="min-h-screen bg-cream">
-      <section className="border-b border-foreground/10">
-        <div className="max-w-[1400px] mx-auto px-6 py-12">
-          <h1 className="font-display text-3xl font-bold text-foreground">
+    <div className="min-h-screen bg-[#f5f0e8] text-[#2a2520]">
+      {/* Hero */}
+      <section className="pt-32 pb-12 md:pt-40 md:pb-16">
+        <div className="container mx-auto px-6 lg:px-16 max-w-3xl">
+          <p className="text-xs tracking-[0.3em] uppercase text-[#2a2520]/40 mb-6">
+            Legal
+          </p>
+          <h1 className="font-serif text-4xl md:text-5xl text-[#2a2520]/90">
             {page?.title || 'Privacy Policy'}
           </h1>
         </div>
       </section>
 
-      <section className="max-w-3xl mx-auto px-6 py-12">
-        <div className="prose prose-gray max-w-none">
-          {page?.content ? (
-            <div 
-              className="text-foreground/70 leading-relaxed whitespace-pre-line"
-              dangerouslySetInnerHTML={{ __html: page.content }}
-            />
-          ) : (
-            <p className="text-foreground/60">
-              Privacy policy content will be loaded from Nexus.
-            </p>
-          )}
+      {/* Content */}
+      <section className="pb-24 md:pb-32">
+        <div className="container mx-auto px-6 lg:px-16 max-w-3xl">
+          <div className="border-t border-[#2a2520]/10 pt-12">
+            {page?.content ? (
+              <div 
+                className="text-[#2a2520]/60 leading-relaxed whitespace-pre-line prose prose-headings:font-serif prose-headings:text-[#2a2520]/80 prose-p:text-[#2a2520]/60 max-w-none"
+                dangerouslySetInnerHTML={{ __html: page.content }}
+              />
+            ) : (
+              <p className="text-[#2a2520]/50">
+                Privacy policy content will be loaded from Nexus.
+              </p>
+            )}
+          </div>
         </div>
       </section>
     </div>

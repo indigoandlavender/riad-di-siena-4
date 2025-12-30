@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Script from "next/script";
-import FAQAccordion from "@/components/FAQAccordion";
 
 interface FAQItem {
   Section: string;
@@ -13,6 +12,7 @@ interface FAQItem {
 
 export default function FAQPage() {
   const [faqItems, setFaqItems] = useState<FAQItem[]>([]);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/faq")
@@ -44,8 +44,10 @@ export default function FAQPage() {
     })),
   };
 
+  let globalIndex = 0;
+
   return (
-    <div className="min-h-screen pt-24">
+    <div className="min-h-screen bg-[#f5f0e8] text-[#2a2520]">
       {/* FAQ Schema */}
       {faqItems.length > 0 && (
         <Script id="faq-schema" type="application/ld+json">
@@ -54,33 +56,71 @@ export default function FAQPage() {
       )}
 
       {/* Hero */}
-      <section className="relative h-[60vh] flex items-center justify-center bg-[#e8e0d4]">
-        <div className="absolute inset-0 bg-foreground/20" />
-        <div className="relative z-10 text-center text-sand px-6 max-w-3xl">
-          <p className="text-xs tracking-[0.4em] mb-6">RIAD DI SIENA</p>
-          <h1 className="font-serif text-4xl md:text-5xl mb-6">Frequently Asked Questions</h1>
-          <p className="text-lg font-light leading-relaxed max-w-xl mx-auto">
+      <section className="pt-32 pb-16 md:pt-40 md:pb-20">
+        <div className="container mx-auto px-6 lg:px-16 text-center max-w-4xl">
+          <p className="text-xs tracking-[0.4em] uppercase text-[#2a2520]/40 mb-8">
+            Support
+          </p>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl tracking-[0.15em] font-light mb-8">
+            F A Q
+          </h1>
+          <p className="text-xl text-[#2a2520]/50 max-w-xl mx-auto">
             Everything you need to know about staying at Riad di Siena
           </p>
         </div>
       </section>
 
       {/* FAQ Sections */}
-      <section className="py-16 bg-sand">
-        <div className="max-w-3xl mx-auto px-6">
-          <FAQAccordion sections={sections} />
-        </div>
-      </section>
+      <section className="pb-24 md:pb-32">
+        <div className="container mx-auto px-6 lg:px-16 max-w-3xl">
+          {Object.entries(sections).map(([sectionName, items]) => (
+            <div key={sectionName} className="mb-16">
+              <p className="text-xs tracking-[0.3em] uppercase text-[#2a2520]/40 mb-8 pb-4 border-b border-[#2a2520]/10">
+                {sectionName}
+              </p>
+              <div className="space-y-0">
+                {items.map((item) => {
+                  const currentIndex = globalIndex++;
+                  const isOpen = openIndex === currentIndex;
+                  return (
+                    <div key={currentIndex} className="border-b border-[#2a2520]/10">
+                      <button
+                        onClick={() => setOpenIndex(isOpen ? null : currentIndex)}
+                        className="w-full py-6 flex items-start justify-between text-left group"
+                      >
+                        <span className="font-serif text-lg text-[#2a2520]/90 pr-8 group-hover:text-[#2a2520] transition-colors">
+                          {item.Question}
+                        </span>
+                        <span className="text-[#2a2520]/40 text-xl flex-shrink-0 mt-1 transition-transform duration-200" style={{ transform: isOpen ? 'rotate(45deg)' : 'none' }}>
+                          +
+                        </span>
+                      </button>
+                      <div 
+                        className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 pb-6' : 'max-h-0'}`}
+                      >
+                        <p className="text-[#2a2520]/50 leading-relaxed pr-12">
+                          {item.Answer}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
 
-      {/* Still Have Questions */}
-      <section className="py-16 bg-cream">
-        <div className="max-w-2xl mx-auto px-6 text-center">
-          <p className="text-foreground/60 text-sm">
-            Still have questions?{" "}
-            <a href="/contact" className="underline hover:text-foreground transition-colors">
-              Get in touch
+          {/* CTA */}
+          <div className="mt-16 text-center py-12 border border-[#2a2520]/10">
+            <p className="text-[#2a2520]/40 text-sm mb-4">
+              Still have questions?
+            </p>
+            <a 
+              href="/contact" 
+              className="inline-block border border-[#2a2520]/20 px-10 py-4 text-xs tracking-[0.2em] uppercase hover:bg-[#2a2520] hover:text-[#f5f0e8] transition-colors"
+            >
+              Get in Touch
             </a>
-          </p>
+          </div>
         </div>
       </section>
     </div>

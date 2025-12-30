@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import PageHeader from "@/components/PageHeader";
 
 interface Section {
   Section: string;
@@ -23,13 +22,23 @@ export default function DisclaimerPage() {
   const intro = sections.find((s) => s.Section === "intro");
 
   return (
-    <div className="min-h-screen pt-24">
-      <PageHeader title={intro?.Title || "Before you book"} />
+    <div className="min-h-screen bg-[#f5f0e8] text-[#2a2520]">
+      {/* Hero */}
+      <section className="pt-32 pb-12 md:pt-40 md:pb-16">
+        <div className="container mx-auto px-6 lg:px-16 max-w-3xl">
+          <p className="text-xs tracking-[0.3em] uppercase text-[#2a2520]/40 mb-6">
+            Important Information
+          </p>
+          <h1 className="font-serif text-4xl md:text-5xl text-[#2a2520]/90">
+            {intro?.Title || "Before You Book"}
+          </h1>
+        </div>
+      </section>
 
       {/* Content */}
-      <section className="py-24 bg-sand">
-        <div className="max-w-2xl mx-auto px-6">
-          <div className="space-y-8 text-foreground/70 leading-relaxed">
+      <section className="pb-16 md:pb-24">
+        <div className="container mx-auto px-6 lg:px-16 max-w-3xl">
+          <div className="border-t border-[#2a2520]/10 pt-12 space-y-8 text-[#2a2520]/60 leading-relaxed">
             {sections.map((section, i) => (
               section.Content && <p key={i}>{section.Content}</p>
             ))}
@@ -38,18 +47,18 @@ export default function DisclaimerPage() {
       </section>
 
       {/* Links */}
-      <section className="py-16 bg-cream">
-        <div className="max-w-2xl mx-auto px-6 text-center">
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <section className="py-16 border-t border-[#2a2520]/10">
+        <div className="container mx-auto px-6 lg:px-16 max-w-3xl text-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link
               href="/faq"
-              className="text-xs tracking-widest text-foreground/60 hover:text-foreground transition-colors"
+              className="text-xs tracking-[0.2em] uppercase text-[#2a2520]/50 hover:text-[#2a2520] transition-colors"
             >
               Read FAQ
             </Link>
             <Link
               href="/house-rules"
-              className="text-xs tracking-widest text-foreground/60 hover:text-foreground transition-colors"
+              className="text-xs tracking-[0.2em] uppercase text-[#2a2520]/50 hover:text-[#2a2520] transition-colors"
             >
               House Rules
             </Link>
