@@ -65,42 +65,21 @@ export default function PhilosophyPage() {
       {intro?.Subtitle && (
         <section className="py-24 md:py-32 border-t border-[#2a2520]/10">
           <div className="container mx-auto px-6 lg:px-16">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 max-w-6xl mx-auto">
-              <div className="lg:col-span-4">
-                <p className="text-xs tracking-[0.3em] uppercase text-[#2a2520]/40 mb-4">
-                  Our Approach
-                </p>
-                <h2 className="font-serif text-3xl md:text-4xl leading-tight text-[#2a2520]/90">
-                  A sanctuary is not built. It is revealed.
-                </h2>
-              </div>
-              <div className="lg:col-span-8 space-y-6 text-[#2a2520]/60 leading-relaxed text-lg">
-                <p>{intro.Subtitle}</p>
-              </div>
+            <div className="max-w-3xl mx-auto">
+              <p className="text-[#2a2520]/70 leading-relaxed text-lg md:text-xl">
+                {intro.Subtitle}
+              </p>
             </div>
           </div>
         </section>
       )}
 
-      {/* Pull Quote */}
-      {hero?.Title && (
-        <section className="py-20 md:py-28 bg-[#ebe5db]">
-          <div className="container mx-auto px-6 lg:px-16 max-w-4xl text-center">
-            <p className="font-serif text-3xl md:text-4xl lg:text-5xl leading-tight text-[#2a2520]/80 italic">
-              "{hero.Title}"
-            </p>
-          </div>
-        </section>
-      )}
+
 
       {/* Imperfection Section - Staggered */}
       {(imperfection?.Subtitle || imperfection?.Body) && (
         <section className="py-24 md:py-32 border-t border-[#2a2520]/10">
           <div className="container mx-auto px-6 lg:px-16 max-w-5xl">
-            <p className="text-xs tracking-[0.3em] uppercase text-[#2a2520]/40 mb-16 text-center">
-              The Beauty of Imperfection
-            </p>
-            
             <div className="space-y-16">
               {imperfection?.Subtitle && (
                 <div className="max-w-2xl mr-auto">
@@ -122,25 +101,13 @@ export default function PhilosophyPage() {
       )}
 
       {/* Wabi-Sabi Section */}
-      {(wabisabi?.Title || wabisabi?.Subtitle) && (
+      {wabisabi?.Subtitle && (
         <section className="py-24 md:py-32 bg-[#ebe5db]">
           <div className="container mx-auto px-6 lg:px-16">
-            <div className="max-w-4xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-                <div>
-                  <p className="text-xs tracking-[0.3em] uppercase text-[#2a2520]/40 mb-6">
-                    Wabi-Sabi
-                  </p>
-                  {wabisabi?.Title && (
-                    <h2 className="font-serif text-3xl md:text-4xl leading-tight text-[#2a2520]/90 italic">
-                      {wabisabi.Title}
-                    </h2>
-                  )}
-                </div>
-                <div className="space-y-6 text-[#2a2520]/60 leading-relaxed">
-                  {wabisabi?.Subtitle && <p>{wabisabi.Subtitle}</p>}
-                </div>
-              </div>
+            <div className="max-w-3xl mx-auto">
+              <p className="text-[#2a2520]/70 leading-relaxed text-lg md:text-xl text-center">
+                {wabisabi.Subtitle}
+              </p>
             </div>
           </div>
         </section>
@@ -173,10 +140,10 @@ export default function PhilosophyPage() {
       <section className="py-24 md:py-32 bg-[#f5f0e8]">
         <div className="container mx-auto px-6 lg:px-16 max-w-3xl text-center">
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl mb-8 text-[#2a2520]/90">
-            Experience the sanctuary.
+            Come as you are.
           </h2>
           <p className="text-[#2a2520]/50 leading-relaxed mb-12 text-lg">
-            Three hundred years of stories, waiting for yours.
+            Three hundred years of quiet. Zahra at the door. Breakfast when you need it.
           </p>
           <Link
             href="/rooms"
