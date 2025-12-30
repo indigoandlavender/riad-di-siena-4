@@ -138,12 +138,22 @@ export default function Footer() {
               <ul className="space-y-2">
                 <li>
                   <a 
-                    href="https://slowmorocco.com/places/marrakech" 
+                    href="https://slowmorocco.com/places" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-sand/70 text-sm hover:text-sand transition-colors"
                   >
-                    Marrakech
+                    Places
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="https://slowmorocco.com/stories" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sand/70 text-sm hover:text-sand transition-colors"
+                  >
+                    Stories
                   </a>
                 </li>
                 <li>
