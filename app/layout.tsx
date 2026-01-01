@@ -9,18 +9,18 @@ import './globals.css'
 export const metadata: Metadata = {
   metadataBase: new URL("https://riaddisiena.com"),
   title: {
-    default: "Riad di Siena | Boutique Guesthouse in Marrakech Medina",
+    default: "Riad di Siena | Marrakech Medina",
     template: "%s | Riad di Siena",
   },
   description: "A 300-year-old sanctuary in the heart of Marrakech medina. Four rooms, a courtyard fountain, rooftop views of the Atlas. Not a hotel—a home with soul.",
-  keywords: ["riad marrakech", "marrakech medina guesthouse", "boutique riad morocco", "traditional moroccan house", "marrakech accommodation", "riad with courtyard"],
+  keywords: ["riad marrakech", "marrakech medina", "riad morocco", "traditional moroccan house", "marrakech accommodation", "riad with courtyard"],
   authors: [{ name: "Riad di Siena" }],
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://riaddisiena.com",
     siteName: "Riad di Siena",
-    title: "Riad di Siena | Boutique Guesthouse in Marrakech Medina",
+    title: "Riad di Siena | Marrakech Medina",
     description: "A 300-year-old sanctuary in the heart of Marrakech medina. Four rooms, a courtyard fountain, rooftop views of the Atlas. Not a hotel—a home with soul.",
     images: [
       {
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Riad di Siena | Boutique Guesthouse in Marrakech Medina",
+    title: "Riad di Siena | Marrakech Medina",
     description: "A 300-year-old sanctuary in the heart of Marrakech medina. Four rooms, a courtyard fountain, rooftop views of the Atlas.",
     images: ["/og-image.jpg"],
   },
@@ -62,7 +62,7 @@ const structuredData = {
   "@type": "LodgingBusiness",
   "@id": "https://riaddisiena.com/#lodgingbusiness",
   "name": "Riad di Siena",
-  "description": "A 300-year-old traditional Moroccan guesthouse in the heart of Marrakech medina. Four uniquely designed rooms around a courtyard with zellige fountain, rooftop terrace with Atlas Mountain views.",
+  "description": "A 300-year-old traditional Moroccan riad in the heart of Marrakech medina. Four uniquely designed rooms around a courtyard with zellige fountain, rooftop terrace with Atlas Mountain views.",
   "url": "https://riaddisiena.com",
   "telephone": "+212-524-391723",
   "email": "happy@riaddisiena.com",
