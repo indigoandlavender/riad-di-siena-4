@@ -180,7 +180,7 @@ export default function RoomsPage() {
                       <img src={room.Image_URL} alt={room.Name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-[#2a2520]/5 flex items-center justify-center text-[#2a2520]/20">
-                        <BedIcon />
+                        <IconBed size={48} />
                       </div>
                     )}
                   </div>
