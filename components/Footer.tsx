@@ -3,6 +3,28 @@
 import Link from "next/link";
 import { useCurrency, Currency } from "./CurrencyContext";
 import { useState, useRef, useEffect } from "react";
+import { IconInstagram, IconChevronDown } from "@/components/icons";
+
+// Custom icons not in standard library
+const PinterestIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 6v8M9 17c1-2 1.5-4 2-6M15 17c-1-2-1.5-4-2-6" />
+  </svg>
+);
+
+const TumblrIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 4h6v4h4v4h-4v4c0 1 1 2 2 2h2v4h-4c-3 0-6-2-6-6v-4H6V8h3V4z" />
+  </svg>
+);
+
+const GlobeIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
 
 // Fallback data if Nexus unavailable
 const FALLBACK_LANGUAGES = [
@@ -95,26 +117,14 @@ export default function Footer() {
               </p>
               {/* Social Icons - Instagram, Pinterest, Tumblr (non-clickable for now) */}
               <div className="flex gap-4">
-                {/* Instagram */}
                 <span className="text-sand/40">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <rect x="2" y="2" width="20" height="20" rx="5" />
-                    <circle cx="12" cy="12" r="4" />
-                    <circle cx="18" cy="6" r="1" fill="currentColor" />
-                  </svg>
+                  <IconInstagram size={18} />
                 </span>
-                {/* Pinterest */}
                 <span className="text-sand/40">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 6v8M9 17c1-2 1.5-4 2-6M15 17c-1-2-1.5-4-2-6" />
-                  </svg>
+                  <PinterestIcon />
                 </span>
-                {/* Tumblr */}
                 <span className="text-sand/40">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M9 4h6v4h4v4h-4v4c0 1 1 2 2 2h2v4h-4c-3 0-6-2-6-6v-4H6V8h3V4z" />
-                  </svg>
+                  <TumblrIcon />
                 </span>
               </div>
             </div>
@@ -206,14 +216,9 @@ export default function Footer() {
                   onClick={() => { setLangOpen(!langOpen); setCurrOpen(false); }}
                   className="flex items-center gap-1 text-sand/50 hover:text-sand/70 transition-colors"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                  </svg>
+                  <GlobeIcon />
                   <span>{currentLang.code}</span>
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M2 4l3 3 3-3" />
-                  </svg>
+                  <IconChevronDown size={10} />
                 </button>
                 {langOpen && (
                   <div className="absolute bottom-full mb-2 right-0 bg-[#1a1a1a] border border-sand/10 py-1 min-w-[100px]">
@@ -239,9 +244,7 @@ export default function Footer() {
                   className="flex items-center gap-1 text-sand/50 hover:text-sand/70 transition-colors"
                 >
                   <span>{currentCurr.symbol} {currentCurr.code}</span>
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M2 4l3 3 3-3" />
-                  </svg>
+                  <IconChevronDown size={10} />
                 </button>
                 {currOpen && (
                   <div className="absolute bottom-full mb-2 right-0 bg-[#1a1a1a] border border-sand/10 py-1 min-w-[80px]">
