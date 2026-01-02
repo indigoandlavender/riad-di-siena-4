@@ -139,7 +139,7 @@ async function handleTheRiad() {
   const processed = data.map((item) => ({
     ...item,
     Image_URL: convertDriveUrl(item.Image_URL || ""),
-  }));
+  })) as Record<string, any>[];
   
   // Group by section
   const sections: Record<string, any> = {};
