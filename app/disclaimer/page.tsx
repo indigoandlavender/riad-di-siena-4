@@ -13,7 +13,7 @@ export default function DisclaimerPage() {
   const [sections, setSections] = useState<Section[]>([]);
 
   useEffect(() => {
-    fetch("/api/disclaimer")
+    fetch("/api/sheets/disclaimer")
       .then((res) => res.json())
       .then(setSections)
       .catch(console.error);

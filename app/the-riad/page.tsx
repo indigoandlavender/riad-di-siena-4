@@ -13,7 +13,7 @@ export default function TheRiadPage() {
   const [content, setContent] = useState<Record<string, Section>>({});
 
   useEffect(() => {
-    fetch("/api/the-riad")
+    fetch("/api/sheets/the-riad")
       .then((res) => res.json())
       .then(setContent)
       .catch(console.error);

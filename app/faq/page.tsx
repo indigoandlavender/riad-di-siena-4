@@ -15,7 +15,7 @@ export default function FAQPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("/api/faq")
+    fetch("/api/sheets/faq")
       .then((res) => res.json())
       .then(setFaqItems)
       .catch(console.error);

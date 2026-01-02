@@ -21,12 +21,12 @@ export default function AmenitiesPage() {
   const [amenities, setAmenities] = useState<Amenity[]>([]);
 
   useEffect(() => {
-    fetch("/api/amenities-hero")
+    fetch("/api/sheets/amenities-hero")
       .then((res) => res.json())
       .then(setHero)
       .catch(console.error);
 
-    fetch("/api/amenities")
+    fetch("/api/sheets/amenities")
       .then((res) => res.json())
       .then(setAmenities)
       .catch(console.error);

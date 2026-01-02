@@ -29,9 +29,9 @@ export default function TheFarmPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/farm-hero").then((res) => res.json()),
-      fetch("/api/farm-content").then((res) => res.json()),
-      fetch("/api/farm-produce").then((res) => res.json()),
+      fetch("/api/sheets/farm-hero").then((res) => res.json()),
+      fetch("/api/sheets/farm-content").then((res) => res.json()),
+      fetch("/api/sheets/farm-produce").then((res) => res.json()),
     ])
       .then(([heroData, contentData, produceData]) => {
         setHero(heroData);

@@ -49,8 +49,8 @@ export default function AddReservationPage() {
   useEffect(() => {
     // Fetch all rooms from both properties
     Promise.all([
-      fetch("/api/rooms").then((r) => r.json()),
-      fetch("/api/douaria-rooms").then((r) => r.json()),
+      fetch("/api/sheets/rooms").then((r) => r.json()),
+      fetch("/api/sheets/douaria-rooms").then((r) => r.json()),
     ])
       .then(([riadRooms, douariaRooms]) => {
         const allRooms = [

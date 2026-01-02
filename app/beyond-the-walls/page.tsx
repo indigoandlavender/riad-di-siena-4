@@ -27,8 +27,8 @@ export default function BeyondTheWallsPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/beyond-the-walls").then((res) => res.json()),
-      fetch("/api/beyond-the-walls-hero").then((res) => res.json()),
+      fetch("/api/sheets/beyond-the-walls").then((res) => res.json()),
+      fetch("/api/sheets/beyond-the-walls-hero").then((res) => res.json()),
     ])
       .then(([propertiesData, heroData]) => {
         setProperties(propertiesData);

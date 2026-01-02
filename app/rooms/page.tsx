@@ -3,6 +3,16 @@
 import { useState, useEffect } from "react";
 import BookingModal from "@/components/BookingModal";
 import { useCurrency } from "@/components/CurrencyContext";
+import {
+  IconBed,
+  IconShower,
+  IconWifi,
+  IconAC,
+  IconRoom,
+  IconBreakfast,
+  IconTowel,
+  IconShampoo,
+} from "@/components/icons";
 
 interface Room {
   Room_ID: string;
@@ -29,107 +39,43 @@ interface GalleryImage {
   Caption?: string;
 }
 
-const BedIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <rect x="1" y="8" width="18" height="8" rx="1" />
-    <path d="M3 8V5a2 2 0 012-2h10a2 2 0 012 2v3" />
-    <line x1="1" y1="16" x2="1" y2="18" />
-    <line x1="19" y1="16" x2="19" y2="18" />
-  </svg>
-);
-
-const BathIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <path d="M3 10h14a1 1 0 011 1v3a4 4 0 01-4 4H6a4 4 0 01-4-4v-3a1 1 0 011-1z" />
-    <path d="M4 10V5a2 2 0 012-2h1" />
-  </svg>
-);
-
-const WifiIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <path d="M2 8c4.5-4 11.5-4 16 0" />
-    <path d="M5 11c3-2.5 7-2.5 10 0" />
-    <path d="M8 14c1.5-1 3.5-1 5 0" />
-    <circle cx="10" cy="16" r="1" fill="currentColor" />
-  </svg>
-);
-
-const AcIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <rect x="2" y="4" width="16" height="10" rx="1" />
-    <path d="M5 17c0-1.5 1-3 2.5-3s2.5 1.5 2.5 3" />
-    <path d="M10 17c0-1.5 1-3 2.5-3s2.5 1.5 2.5 3" />
-  </svg>
-);
-
-const SizeIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <rect x="2" y="2" width="16" height="16" />
-    <path d="M2 10h16" />
-    <path d="M10 2v16" />
-  </svg>
-);
-
+// View icon - custom for courtyard views
 const ViewIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <circle cx="10" cy="10" r="3" />
-    <path d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5z" />
-  </svg>
-);
-
-const BreakfastIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <ellipse cx="10" cy="14" rx="7" ry="3" />
-    <path d="M3 14v1a7 3 0 0014 0v-1" />
-    <path d="M7 8v3M10 6v5M13 8v3" />
-  </svg>
-);
-
-const LinensIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <path d="M3 4h14v12a2 2 0 01-2 2H5a2 2 0 01-2-2V4z" />
-    <path d="M3 4c0-1 1-2 3-2h8c2 0 3 1 3 2" />
-    <path d="M7 8h6M7 12h6" />
-  </svg>
-);
-
-const AmenitiesIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <path d="M10 2v4M10 14v4" />
-    <path d="M6 10a4 4 0 018 0" />
-    <circle cx="10" cy="10" r="2" />
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="3" />
+    <path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6z" />
   </svg>
 );
 
 const iconMap: Record<string, () => JSX.Element> = {
-  "bathroom": BathIcon,
-  "ensuite": BathIcon,
-  "en-suite": BathIcon,
-  "private": BathIcon,
-  "wi-fi": WifiIcon,
-  "wifi": WifiIcon,
-  "air": AcIcon,
-  "conditioning": AcIcon,
-  "bed": BedIcon,
-  "queen": BedIcon,
-  "king": BedIcon,
-  "double": BedIcon,
-  "m²": SizeIcon,
-  "m2": SizeIcon,
-  "sqm": SizeIcon,
-  "30m": SizeIcon,
-  "25m": SizeIcon,
-  "20m": SizeIcon,
-  "35m": SizeIcon,
-  "40m": SizeIcon,
-  "view": ViewIcon,
-  "courtyard": ViewIcon,
-  "breakfast": BreakfastIcon,
-  "linens": LinensIcon,
-  "towels": LinensIcon,
-  "shower": AmenitiesIcon,
-  "shampoo": AmenitiesIcon,
-  "toiletries": AmenitiesIcon,
+  "bathroom": () => <IconShower size={20} />,
+  "ensuite": () => <IconShower size={20} />,
+  "en-suite": () => <IconShower size={20} />,
+  "private": () => <IconShower size={20} />,
+  "wi-fi": () => <IconWifi size={20} />,
+  "wifi": () => <IconWifi size={20} />,
+  "air": () => <IconAC size={20} />,
+  "conditioning": () => <IconAC size={20} />,
+  "bed": () => <IconBed size={20} />,
+  "queen": () => <IconBed size={20} />,
+  "king": () => <IconBed size={20} />,
+  "double": () => <IconBed size={20} />,
+  "m²": () => <IconRoom size={20} />,
+  "m2": () => <IconRoom size={20} />,
+  "sqm": () => <IconRoom size={20} />,
+  "30m": () => <IconRoom size={20} />,
+  "25m": () => <IconRoom size={20} />,
+  "20m": () => <IconRoom size={20} />,
+  "35m": () => <IconRoom size={20} />,
+  "40m": () => <IconRoom size={20} />,
+  "view": () => <ViewIcon />,
+  "courtyard": () => <ViewIcon />,
+  "breakfast": () => <IconBreakfast size={20} />,
+  "linens": () => <IconTowel size={20} />,
+  "towels": () => <IconTowel size={20} />,
+  "shower": () => <IconShower size={20} />,
+  "shampoo": () => <IconShampoo size={20} />,
+  "toiletries": () => <IconShampoo size={20} />,
 };
 
 export default function RoomsPage() {
@@ -144,10 +90,10 @@ export default function RoomsPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/rooms").then((res) => res.json()),
-      fetch("/api/rooms-hero").then((res) => res.json()),
-      fetch("/api/rooms-gallery").then((res) => res.json()),
-      fetch("/api/settings").then((res) => res.json()),
+      fetch("/api/sheets/rooms").then((res) => res.json()),
+      fetch("/api/sheets/rooms-hero").then((res) => res.json()),
+      fetch("/api/sheets/rooms-gallery").then((res) => res.json()),
+      fetch("/api/sheets/settings").then((res) => res.json()),
     ])
       .then(([roomsData, heroData, galleryData, settingsData]) => {
         setRooms(roomsData);
@@ -234,7 +180,7 @@ export default function RoomsPage() {
                       <img src={room.Image_URL} alt={room.Name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-[#2a2520]/5 flex items-center justify-center text-[#2a2520]/20">
-                        <BedIcon />
+                        <IconBed size={48} />
                       </div>
                     )}
                   </div>

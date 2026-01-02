@@ -5,6 +5,12 @@ import { useCurrency } from "@/components/CurrencyContext";
 import BookingModal from "@/components/BookingModal";
 import GalleryCarousel from "@/components/GalleryCarousel";
 import BeyondTheWallsNav from "@/components/BeyondTheWallsNav";
+import {
+  IconBed,
+  IconShower,
+  IconAC,
+  IconWifi,
+} from "@/components/icons";
 
 interface Hero {
   Title: string;
@@ -34,72 +40,39 @@ interface GalleryImage {
   Caption?: string;
 }
 
-// Minimal monochrome icons
-const BedIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <rect x="1" y="8" width="18" height="8" rx="1" />
-    <path d="M3 8V5a2 2 0 012-2h10a2 2 0 012 2v3" />
-    <line x1="1" y1="16" x2="1" y2="18" />
-    <line x1="19" y1="16" x2="19" y2="18" />
-  </svg>
-);
-
-const BathIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <path d="M3 10h14a1 1 0 011 1v3a4 4 0 01-4 4H6a4 4 0 01-4-4v-3a1 1 0 011-1z" />
-    <path d="M4 10V5a2 2 0 012-2h1" />
-  </svg>
-);
-
-const AcIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <rect x="2" y="4" width="16" height="10" rx="1" />
-    <path d="M5 17c0-1.5 1-3 2.5-3s2.5 1.5 2.5 3" />
-    <path d="M10 17c0-1.5 1-3 2.5-3s2.5 1.5 2.5 3" />
-  </svg>
-);
-
-const WifiIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <path d="M2 8c4.5-4 11.5-4 16 0" />
-    <path d="M5 11c3-2.5 7-2.5 10 0" />
-    <path d="M8 14c1.5-1 3.5-1 5 0" />
-    <circle cx="10" cy="16" r="1" fill="currentColor" />
-  </svg>
-);
-
+// Custom icons not in shared library
 const TerraceIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <rect x="2" y="10" width="16" height="7" rx="1" />
-    <path d="M2 13h16" />
-    <path d="M6 10V7" />
-    <path d="M14 10V7" />
-    <path d="M4 7h12" />
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="12" width="20" height="8" rx="1" />
+    <path d="M2 16h20" />
+    <path d="M7 12V8" />
+    <path d="M17 12V8" />
+    <path d="M5 8h14" />
   </svg>
 );
 
 const SittingIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.25">
-    <path d="M5 17v-5h10v5" />
-    <path d="M3 12h14" />
-    <path d="M5 12V8a2 2 0 012-2h6a2 2 0 012 2v4" />
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 20v-6h14v6" />
+    <path d="M3 14h18" />
+    <path d="M5 14V9a2 2 0 012-2h10a2 2 0 012 2v5" />
   </svg>
 );
 
 const iconMap: Record<string, () => JSX.Element> = {
-  "bed": BedIcon,
-  "king": BedIcon,
-  "queen": BedIcon,
-  "bathroom": BathIcon,
-  "en-suite": BathIcon,
-  "ensuite": BathIcon,
-  "air": AcIcon,
-  "conditioning": AcIcon,
-  "wifi": WifiIcon,
-  "wi-fi": WifiIcon,
-  "terrace": TerraceIcon,
-  "sitting": SittingIcon,
-  "seating": SittingIcon,
+  "bed": () => <IconBed size={20} />,
+  "king": () => <IconBed size={20} />,
+  "queen": () => <IconBed size={20} />,
+  "bathroom": () => <IconShower size={20} />,
+  "en-suite": () => <IconShower size={20} />,
+  "ensuite": () => <IconShower size={20} />,
+  "air": () => <IconAC size={20} />,
+  "conditioning": () => <IconAC size={20} />,
+  "wifi": () => <IconWifi size={20} />,
+  "wi-fi": () => <IconWifi size={20} />,
+  "terrace": () => <TerraceIcon />,
+  "sitting": () => <SittingIcon />,
+  "seating": () => <SittingIcon />,
 };
 
 const getIconForFeature = (feature: string): JSX.Element | null => {
@@ -130,11 +103,11 @@ export default function TheDouariaPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/douaria-hero").then((res) => res.json()),
-      fetch("/api/douaria-content").then((res) => res.json()),
-      fetch("/api/douaria-rooms").then((res) => res.json()),
-      fetch("/api/douaria-gallery").then((res) => res.json()),
-      fetch("/api/settings").then((res) => res.json()),
+      fetch("/api/sheets/douaria-hero").then((res) => res.json()),
+      fetch("/api/sheets/douaria-content").then((res) => res.json()),
+      fetch("/api/sheets/douaria-rooms").then((res) => res.json()),
+      fetch("/api/sheets/douaria-gallery").then((res) => res.json()),
+      fetch("/api/sheets/settings").then((res) => res.json()),
     ])
       .then(([heroData, contentData, roomsData, galleryData, settingsData]) => {
         setHero(heroData);

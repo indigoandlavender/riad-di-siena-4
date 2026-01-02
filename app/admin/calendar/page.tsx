@@ -47,8 +47,8 @@ export default function CalendarPage() {
   // Fetch rooms and bookings
   useEffect(() => {
     Promise.all([
-      fetch("/api/rooms").then((r) => r.json()),
-      fetch("/api/douaria-rooms").then((r) => r.json()),
+      fetch("/api/sheets/rooms").then((r) => r.json()),
+      fetch("/api/sheets/douaria-rooms").then((r) => r.json()),
       fetch("/api/admin/bookings").then((r) => r.json()),
     ])
       .then(([riadRooms, douariaRooms, bookingsData]) => {

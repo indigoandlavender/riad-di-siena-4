@@ -14,7 +14,7 @@ export default function JourneysPage() {
   const [content, setContent] = useState<JourneysContent | null>(null);
 
   useEffect(() => {
-    fetch("/api/journeys")
+    fetch("/api/sheets/journeys")
       .then((res) => res.json())
       .then(setContent)
       .catch(console.error);

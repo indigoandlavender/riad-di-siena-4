@@ -43,17 +43,17 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/home")
+    fetch("/api/sheets/home")
       .then((res) => res.json())
       .then((data) => setSections(data || {}))
       .catch((err) => console.error("Home API error:", err));
 
-    fetch("/api/testimonials")
+    fetch("/api/sheets/testimonials")
       .then((res) => res.json())
       .then((data) => setTestimonials(data || []))
       .catch((err) => console.error("Testimonials API error:", err));
 
-    fetch("/api/beyond-the-walls")
+    fetch("/api/sheets/beyond-the-walls")
       .then((res) => res.json())
       .then((data) => setBeyondTheWalls(data || []))
       .catch((err) => console.error("Beyond the Walls API error:", err))

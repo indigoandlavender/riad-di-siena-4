@@ -11,7 +11,7 @@ export default function HouseRulesPage() {
   const [rules, setRules] = useState<Rule[]>([]);
 
   useEffect(() => {
-    fetch("/api/house-rules")
+    fetch("/api/sheets/house-rules")
       .then((res) => res.json())
       .then(setRules)
       .catch(console.error);

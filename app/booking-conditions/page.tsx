@@ -13,7 +13,7 @@ export default function BookingConditionsPage() {
   const [conditions, setConditions] = useState<Condition[]>([]);
 
   useEffect(() => {
-    fetch("/api/booking-conditions")
+    fetch("/api/sheets/booking-conditions")
       .then((res) => res.json())
       .then(setConditions)
       .catch(console.error);

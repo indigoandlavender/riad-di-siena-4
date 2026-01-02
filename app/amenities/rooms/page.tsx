@@ -89,10 +89,10 @@ export default function RoomsPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/rooms").then((res) => res.json()),
-      fetch("/api/rooms-hero").then((res) => res.json()),
-      fetch("/api/rooms-gallery").then((res) => res.json()),
-      fetch("/api/settings").then((res) => res.json()),
+      fetch("/api/sheets/rooms").then((res) => res.json()),
+      fetch("/api/sheets/rooms-hero").then((res) => res.json()),
+      fetch("/api/sheets/rooms-gallery").then((res) => res.json()),
+      fetch("/api/sheets/settings").then((res) => res.json()),
     ])
       .then(([roomsData, heroData, galleryData, settingsData]) => {
         setRooms(roomsData);

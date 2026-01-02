@@ -42,12 +42,12 @@ export default function AnnexDirectionsPage() {
   const [language, setLanguage] = useState<Language>("en");
 
   useEffect(() => {
-    fetch("/api/directions")
+    fetch("/api/sheets/directions")
       .then((res) => res.json())
       .then(setDirections)
       .catch(console.error);
       
-    fetch("/api/directions-settings")
+    fetch("/api/sheets/directions-settings")
       .then((res) => res.json())
       .then(setSettings)
       .catch(console.error);

@@ -18,7 +18,7 @@ export default function RoomsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    fetch("/api/rooms")
+    fetch("/api/sheets/rooms")
       .then((res) => res.json())
       .then((data) => {
         setRooms(data);

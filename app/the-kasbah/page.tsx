@@ -46,10 +46,10 @@ export default function TheKasbahPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/kasbah-hero").then((res) => res.json()),
-      fetch("/api/kasbah-content").then((res) => res.json()),
-      fetch("/api/kasbah-experience").then((res) => res.json()),
-      fetch("/api/kasbah-gallery").then((res) => res.json()),
+      fetch("/api/sheets/kasbah-hero").then((res) => res.json()),
+      fetch("/api/sheets/kasbah-content").then((res) => res.json()),
+      fetch("/api/sheets/kasbah-experience").then((res) => res.json()),
+      fetch("/api/sheets/kasbah-gallery").then((res) => res.json()),
     ])
       .then(([heroData, contentData, expData, galleryData]) => {
         setHero(heroData);

@@ -14,7 +14,7 @@ export default function PhilosophyPage() {
   const [content, setContent] = useState<Record<string, Section>>({});
 
   useEffect(() => {
-    fetch("/api/philosophy")
+    fetch("/api/sheets/philosophy")
       .then((res) => res.json())
       .then(setContent)
       .catch(console.error);
