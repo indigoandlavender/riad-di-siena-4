@@ -53,7 +53,7 @@ export default function SlowWaySouth({
 
   // Fetch settings for banner title and price
   useEffect(() => {
-    fetch("/api/settings")
+    fetch("/api/sheets/settings")
       .then((res) => res.json())
       .then((settings) => {
         if (settings.journey_banner_title) {

@@ -25,7 +25,7 @@ export default function NexusLegalPage({ pageId, fallbackTitle, localApiEndpoint
 
   useEffect(() => {
     // Try Nexus first
-    fetch(`/api/nexus/legal?page=${pageId}`)
+    fetch(`/api/sheets/nexus-legal?page=${pageId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Nexus not available");
         return res.json();

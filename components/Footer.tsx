@@ -68,7 +68,7 @@ export default function Footer() {
 
   // Fetch Nexus data on mount
   useEffect(() => {
-    fetch("/api/nexus/footer")
+    fetch("/api/sheets/nexus-footer")
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {

@@ -58,11 +58,11 @@ export default function StayWithUsModal({ isOpen, onClose }: StayWithUsModalProp
   useEffect(() => {
     if (isOpen) {
       Promise.all([
-        fetch("/api/rooms").then(res => res.json()),
-        fetch("/api/douaria-rooms").then(res => res.json()),
-        fetch("/api/kasbah-experience").then(res => res.json()),
-        fetch("/api/desert-tents").then(res => res.json()),
-        fetch("/api/settings").then(res => res.json()),
+        fetch("/api/sheets/rooms").then(res => res.json()),
+        fetch("/api/sheets/douaria-rooms").then(res => res.json()),
+        fetch("/api/sheets/kasbah-experience").then(res => res.json()),
+        fetch("/api/sheets/desert-tents").then(res => res.json()),
+        fetch("/api/sheets/settings").then(res => res.json()),
       ])
         .then(([riad, douaria, kasbah, tents, settings]) => {
           const filterBookable = (rooms: any[]) => rooms.filter((r: any) => 
